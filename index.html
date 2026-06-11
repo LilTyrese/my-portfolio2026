@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Tyrese Taylor — UX/UI Designer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #FAFAFA;
+            --surface: #FFFFFF;
+            --text-main: #111111;
+            --text-muted: #666666;
+            --text-light: #8E8E93;
+            --accent: #2563EB;
+            --border: #EEEEEE;
+            --border-hover: #DDDDDD;
+            --radius-sm: 8px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            scroll-behavior: smooth;
+        }
+
+        img {
+    max-width: 100%;
+    height: auto;
+    display: block; /* Removes weird whitespace gaps below images */
+    border-radius: 8px; /* Optional: matches your site's style */
+}
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Navigation */
+        nav {
+            position: sticky;
+            top: 0;
+            background: rgba(250, 250, 250, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 100;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+            transition: var(--transition);
+        }
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 72px;
+        }
+        .logo {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: var(--text-main);
+            text-decoration: none;
+        }
+        .logo span {
+            color: var(--text-light);
+            font-weight: 400;
+        }
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+        .nav-links a:hover {
+            color: var(--text-main);
+        }
+        .nav-btn {
+            background: var(--text-main);
+            color: var(--surface) !important;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+        }
+        .nav-btn:hover {
+            background: var(--accent);
+            transform: translateY(-1px);
+        }
+
+        /* Hero */
+        .hero {
+            padding: 120px 0 80px;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 30px;
+            margin-bottom: 24px;
+        }
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            margin-bottom: 24px;
+            max-width: 800px;
+        }
+        .hero h1 span {
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+        .hero p {
+            font-size: 18px;
+            color: var(--text-muted);
+            max-width: 540px;
+            margin-bottom: 40px;
+        }
+        .hero-stats {
+            display: flex;
+            gap: 48px;
+            border-top: 1px solid var(--border);
+            padding-top: 32px;
+            max-width: max-content;
+        }
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Section headers */
+        .section-header {
+            margin: 100px 0 40px;
+        }
+        .section-header h2 {
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+        }
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        /* Projects Grid */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+            margin-bottom: 80px;
+        }
+        .project-card {
+            background: var(--surface);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+        }
+        .project-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.02);
+        }
+        .project-image {
+            height: 240px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            background: #F3F3F3;
+            transition: var(--transition);
+        }
+        .project-card:hover .project-image {
+            opacity: 0.95;
+        }
+        .project-image.miracle { background: #E0F2FE; }
+        .project-image.splitr { background: #FCE7F3; }
+        .project-image.charitable { background: #DCFCE7; }
+
+        .project-content {
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        .project-tag {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-light);
+            margin-bottom: 12px;
+        }
+        .project-card h3 {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            margin-bottom: 12px;
+        }
+        .project-card p {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            flex-grow: 1;
+        }
+        .project-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .meta-tag {
+            font-size: 11px;
+            background: var(--bg);
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+        }
+        .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-main);
+            transition: var(--transition);
+        }
+        .project-card:hover .read-more {
+            color: var(--accent);
+            gap: 8px;
+        }
+
+        /* About Section */
+        .about-section {
+            display: grid;
+            grid-template-columns: 4fr 7fr;
+            gap: 64px;
+            padding: 80px 0;
+            border-top: 1px solid var(--border);
+        }
+        .about-image {
+            background: var(--surface);
+            border-radius: var(--radius-md);
+            height: 320px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+        }
+        .about-image span {
+            font-size: 48px;
+        }
+        .about-text h2 {
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 24px;
+        }
+        .about-text p {
+            color: var(--text-muted);
+            font-size: 15px;
+            line-height: 1.7;
+            margin-bottom: 24px;
+        }
+        .film-mention {
+            background: var(--surface);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            margin: 32px 0;
+            border: 1px solid var(--border);
+        }
+        .film-mention p {
+            margin-bottom: 0;
+            font-size: 13.5px;
+        }
+        .skill-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 32px 0;
+        }
+        .skill {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 6px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 12.5px;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+        .resume-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--text-main);
+            color: var(--surface);
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+        .resume-btn:hover {
+            background: var(--accent);
+            gap: 10px;
+        }
+
+        /* Contact */
+        .contact-section {
+            text-align: center;
+            padding: 120px 0;
+            border-top: 1px solid var(--border);
+        }
+        .contact-section h2 {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 12px;
+        }
+        .contact-section p {
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            font-size: 16px;
+        }
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            align-items: center;
+        }
+        .contact-btn {
+            display: inline-block;
+            background: var(--text-main);
+            color: var(--surface);
+            padding: 12px 32px;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: var(--transition);
+        }
+        .contact-btn:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+        }
+        .secondary-contact-btn {
+            display: inline-block;
+            background: var(--surface);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 12px 32px;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: var(--transition);
+        }
+        .secondary-contact-btn:hover {
+            border-color: var(--border-hover);
+            background: var(--bg);
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px 0;
+            border-top: 1px solid var(--border);
+            color: var(--text-light);
+            font-size: 13px;
+        }
+        footer .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        @media (max-width: 900px) {
+            .hero h1 { font-size: 38px; }
+            .about-section { grid-template-columns: 1fr; gap: 40px; padding: 40px 0; }
+            .about-image { height: 240px; }
+            .projects-grid { grid-template-columns: 1fr; gap: 24px; }
+            .hero { padding: 80px 0 40px; }
+            .contact-links { flex-direction: column; width: 100%; gap: 12px; }
+            .contact-btn, .secondary-contact-btn { width: 100%; max-width: 320px; }
+            footer .container { flex-direction: column; gap: 8px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="container nav-container">
+        <a href="#" class="logo">[T].[T]<span> — Portfolio</span></a>
+        <div class="nav-links">
+            <a href="#work">Work</a>
+            <a href="#about">About</a>
+            <a href="#contact" class="nav-btn">Contact</a>
+        </div>
+    </div>
+</nav>
+
+<section class="hero">
+    <div class="container">
+        <div class="hero-badge">Open to Product Design Roles</div>
+        <h1>Crafting digital experiences with <span>empathy & structural intention.</span></h1>
+        <p>I design human-centered interfaces that make complex logic feel effortlessly intuitive.</p>
+        
+        <div class="hero-stats">
+            <div class="stat-item">
+                <div class="stat-number">2</div>
+                <div class="stat-label">Certifications (UX & Dev)</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">4</div>
+                <div class="stat-label">Global Video Productions</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">User-Centered Focus</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<main class="container" id="work">
+    <div class="section-header">
+        <h2>Selected Work</h2>
+        <p>Case studies exploring constraints, user research, and structural iterations.</p>
+    </div>
+    
+    <div class="projects-grid">
+        <a href="#" class="project-card" id="miracleLink">
+            <div class="project-image miracle"><img src="/images/Thumbnail case study.png" alt="" height=""></div>
+            <div class="project-content">
+                <span class="project-tag">Habit Tracking • 2026</span>
+                <h3>Miracle Morning</h3>
+                <p>Distilling a fragmented 40-screen experience down to 8 hyper-focused flows for the SAVERS routine. A study in strategic friction and minimalism.</p>
+                <div class="project-meta">
+                    <span class="meta-tag">UX Research</span>
+                    <span class="meta-tag">UI Design</span>
+                    <span class="meta-tag">Usability Testing</span>
+                </div>
+                <div class="read-more">View Case Study →</div>
+            </div>
+        </a>
+
+        <a href="#" class="project-card" id="splitrLink">
+            <div class="project-image splitr">💸</div>
+            <div class="project-content">
+                <span class="project-tag">Bill Splitting • 5-Day Sprint</span>
+                <h3>Split/R</h3>
+                <p>Re-engineering micro-transactions for group dining. An account-free layout engineered to accurately calculate tax & split items under 60 seconds.</p>
+                <div class="project-meta">
+                    <span class="meta-tag">User Interviews</span>
+                    <span class="meta-tag">Visual Design</span>
+                    <span class="meta-tag">Prototyping</span>
+                </div>
+                <div class="read-more">View Case Study →</div>
+            </div>
+        </a>
+
+        <a href="#" class="project-card" id="charitableLink">
+            <div class="project-image charitable">🤝</div>
+            <div class="project-content">
+                <span class="project-tag">Giving App • 2020 — 2026</span>
+                <h3>Charitable</h3>
+                <p>Establishing digital credibility for mutual aid organizations. Redesigning donation checkout paths to optimize transparent payment tracking.</p>
+                <div class="project-meta">
+                    <span class="meta-tag">Trust Architecture</span>
+                    <span class="meta-tag">Cross-functional</span>
+                    <span class="meta-tag">Iteration</span>
+                </div>
+                <div class="read-more">View Case Study →</div>
+            </div>
+        </a>
+    </div>
+</main>
+
+<section class="container" id="about">
+    <div class="about-section">
+        <div class="about-image">
+            <span><img src="/images/MY PICTURE DESIGN.jpeg" alt="" width="200"></span>
+            <p style="margin-top: 12px; color: var(--text-light); font-size: 12px;"></p>
+        </div>
+        <div class="about-text">
+            <h2>About Me</h2>
+            <p>I am a UX/UI designer based in Indy. My career started in a 2020 UX Design & software engineering bootcamp, where I bridged the gap between front-end engineering limits and design architectures. This analytical grounding drives how I handle complex user workflows today.</p>
+            
+            <div class="film-mention">
+                <p>🎬 <strong>Narrative Strategy:</strong> Between product cycles, I have directed and filmed 4 music videos worldwide. The narrative pacing required to hook an audience in cinema mirrors the exact psychological empathy required to guide a user through a layout.</p>
+            </div>
+            
+            <div class="skill-list">
+                <span class="skill">Figma</span>
+                <span class="skill">User Research</span>
+                <span class="skill">Wireframing</span>
+                <span class="skill">Interactive Prototyping</span>
+                <span class="skill">Design Systems</span>
+                <span class="skill">HTML/CSS</span>
+            </div>
+            
+            <a href="#" id="resumeBtn" class="resume-btn">View Resume →</a>
+        </div>
+    </div>
+</section>
+
+<section id="contact" class="contact-section">
+    <div class="container">
+        <h2>Let's build together</h2>
+        <p>Currently open to full-time roles, collaborative contracts, or design consulting.</p>
+        <div class="contact-links">
+            <a href="mailto:worklife380@atomicmail.io" class="contact-btn">worklife380@atomicmail.io</a>
+            <a href="https://www.linkedin.com/in/tyrese-taylor/" class="secondary-contact-btn" target="_blank">LinkedIn Profile →</a>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="container">
+        <p>© 2026 Tyrese Taylor — UX/UI Design</p>
+        <p>Based in INDY • Available Worldwide</p>
+    </div>
+</footer>
+
+<script>
+    const caseStudies = {
+        miracle: "miracle-morning-case-study.html",
+        splitr: "splitr-case-study.html",
+        charitable: "charitable-case-study.html"
+    };
+    
+    // Updated function to handle navigation instead of an alert
+    function handleCaseStudy(filePath) {
+        window.location.href = filePath;
+    }
+    
+    document.getElementById('miracleLink').addEventListener('click', (e) => {
+        e.preventDefault();
+        handleCaseStudy(caseStudies.miracle);
+    });
+    
+    document.getElementById('splitrLink').addEventListener('click', (e) => {
+        e.preventDefault();
+        handleCaseStudy(caseStudies.splitr);
+    });
+    
+    document.getElementById('charitableLink').addEventListener('click', (e) => {
+        e.preventDefault();
+        handleCaseStudy(caseStudies.charitable);
+    });
+    
+    document.getElementById('resumeBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        // Change 'resume.pdf' to your actual file name
+        window.location.href = 'resume.pdf'; 
+    });
+</script>
+</body>
+</html>

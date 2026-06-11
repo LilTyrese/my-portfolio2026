@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Miracle Morning — UX Case Study</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #FAFAFA;
+            --surface: #FFFFFF;
+            --text-main: #111111;
+            --text-muted: #555555;
+            --text-light: #8E8E93;
+            --accent: #2563EB;
+            --border: #EAEAEA;
+            --radius-md: 16px;
+            --radius-sm: 8px;
+            --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+        
+        /* Navigation */
+        .back-nav { padding: 32px 0; }
+        .back-link {
+            text-decoration: none; color: var(--text-muted);
+            font-size: 14px; font-weight: 500; display: inline-flex;
+            align-items: center; gap: 6px; transition: var(--transition);
+        }
+        .back-link:hover { color: var(--text-main); transform: translateX(-4px); }
+
+        /* Header */
+        header { padding: 40px 0 60px; border-bottom: 1px solid var(--border); }
+        .meta-tag {
+            font-size: 12px; font-weight: 600; color: var(--accent);
+            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; display: inline-block;
+        }
+        h1 { font-size: 42px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.2; margin-bottom: 24px; }
+        .lead-text { font-size: 18px; color: var(--text-muted); }
+
+        /* Stats Grid */
+        .meta-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+            padding: 32px 0; border-bottom: 1px solid var(--border); margin-bottom: 48px;
+        }
+        .meta-item h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-light); margin-bottom: 6px; }
+        .meta-item p { font-size: 14px; color: var(--text-main); font-weight: 500; }
+
+        /* Content Structure */
+        section { padding-bottom: 60px; }
+        h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; margin: 40px 0 16px; color: var(--text-main); }
+        h3.subsection-title { font-size: 18px; font-weight: 600; margin: 24px 0 12px; color: var(--text-main); }
+        p { font-size: 15px; color: var(--text-muted); margin-bottom: 20px; }
+        ul { list-style: none; margin-bottom: 24px; }
+        ul li { position: relative; padding-left: 20px; margin-bottom: 10px; font-size: 15px; color: var(--text-muted); }
+        ul li::before { content: "—"; position: absolute; left: 0; color: var(--accent); }
+
+        /* Image Containers */
+        .image-container {
+            background: #F0F2F5; border: 1px dashed #D1D1D6;
+            border-radius: var(--radius-md); padding: 60px 24px; text-align: center;
+            margin: 28px 0; color: var(--text-light); font-size: 14px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+        }
+        .image-container span.icon { font-size: 32px; }
+        .image-container span.label { font-weight: 600; color: var(--text-muted); }
+
+        /* Callouts */
+        .callout-box {
+            background: #F4F7FE; border-left: 4px solid var(--accent);
+            padding: 24px; border-radius: 0 var(--radius-md) var(--radius-md) 0; margin: 32px 0;
+        }
+        .callout-box h4 { font-size: 13px; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; letter-spacing: 0.05em; }
+        .callout-box p { margin-bottom: 0; font-size: 14.5px; color: var(--text-main); font-weight: 500; }
+
+        /* Dual Column Layout for Before/After */
+        .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 24px 0; }
+        .comparison-card { background: var(--surface); border: 1px solid var(--border); padding: 24px; border-radius: var(--radius-md); }
+        .comparison-card.before { border-top: 3px solid var(--text-light); }
+        .comparison-card.after { border-top: 3px solid var(--accent); }
+        .comparison-card h4 { font-size: 12px; color: var(--text-light); text-transform: uppercase; margin-bottom: 8px; }
+        .comparison-card .stat { font-size: 28px; font-weight: 700; color: var(--text-main); }
+
+        /* Visual Matrix Block for Friction/Fixes */
+        .matrix-row {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px; 
+            background: var(--surface); border: 1px solid var(--border); 
+            border-radius: var(--radius-md); padding: 24px; margin-bottom: 20px;
+        }
+        .matrix-left { border-right: 1px solid var(--border); padding-right: 20px; }
+        .matrix-right { padding-left: 10px; }
+        .tag-friction { display: inline-block; background: #FFE0E6; color: #D81B60; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; margin-bottom: 8px; }
+        .tag-fix { display: inline-block; background: #E8F5E9; color: #2E7D32; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; margin-bottom: 8px; }
+        .matrix-thumb { background: #F9F9F9; border: 1px dashed var(--border); padding: 16px; font-size: 12px; color: var(--text-light); text-align: center; border-radius: var(--radius-sm); margin-top: 12px; }
+
+        /* Project Footer Navigation Buttons */
+        .project-nav-container {
+            border-top: 1px solid var(--border); padding: 48px 0; margin-top: 40px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .p-btn {
+            text-decoration: none; font-size: 13.5px; font-weight: 600; color: var(--text-muted);
+            padding: 10px 18px; border: 1px solid var(--border); border-radius: 30px;
+            background: var(--surface); transition: var(--transition); display: inline-flex; align-items: center; gap: 6px;
+        }
+        .p-btn:hover { border-color: var(--text-light); color: var(--text-main); background: var(--bg); }
+        .p-btn.next { background: var(--text-main); color: var(--surface); border-color: var(--text-main); }
+        .p-btn.next:hover { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+
+        footer { padding: 40px 0; text-align: center; color: var(--text-light); font-size: 13px; border-top: 1px solid var(--border); background: #F5F5F5; }
+        @media (max-width: 700px) {
+            .matrix-row { grid-template-columns: 1fr; }
+            .matrix-left { border-right: none; border-bottom: 1px solid var(--border); padding-right: 0; padding-bottom: 20px; }
+            .matrix-right { padding-left: 0; padding-top: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="back-nav">
+        <a href="index.html" class="back-link">← Back to Portfolio</a>
+    </div>
+
+    <header>
+        <span class="meta-tag">UX Case Study — Habit Tracking</span>
+        <h1>Miracle Morning: Simplifying Daily Routines</h1>
+        <p class="lead-text">How taking a break from design helped me turn a cluttered 40-screen mobile app concept into a simple, automated 8-screen flow.</p>
+    </header>
+
+    <div class="meta-grid">
+        <div class="meta-item"><h3>Role</h3><p>Solo UX/UI Designer</p></div>
+        <div class="meta-item"><h3>Timeline</h3><p>2020 Concept • 2026 Redesign</p></div>
+        <div class="meta-item"><h3>Core Goal</h3><p>Remove app clutter & distractions</p></div>
+    </div>
+
+    <section>
+        <h2>The Initial Idea (2020)</h2>
+        <p>The goal was to design a mobile app companion for Hal Elrod's book, <em>The Miracle Morning</em>. When I first started, I thought a great app needed to have as many features as possible. I tried to build in options for every single small habit choice a user could make.</p>
+        
+        <h3 class="subsection-title">What Users Found Frustrating</h3>
+        <p>When I talked to people who used morning trackers, they all said the same thing: updating the app felt like extra chores. Setting up timers, filling out forms, and tapping boxes to save their progress ruined the peaceful mood of their morning.</p>
+
+        <div class="image-container">
+            <span class="icon"><img src="/images/40 Screen to 8.png" alt=""></span>
+            <span class="label">[ Image: Original 2020 Cluttered App Map ]</span>
+            <p style="font-size:12px; max-width:400px; margin:0;">Place your old, complicated user flow chart from Figma here to show how messy the app was at first.</p>
+        </div>
+    </section>
+
+    <section>
+        <h2>The Intermission (Learning to Say No)</h2>
+        <p>After creating my first rough concept, I spent a few years working directly on live movie sets directing videos and writing scripts. Working in film taught me how to edit out filler scenes that slowed down the story. When I came back to look at my app design, I realized it was full of digital filler screens that users didn't actually need.</p>
+        
+        <div class="callout-box">
+            <h4>💡 The Big Realization</h4>
+            <p>A user doesn't need to tap through five confirmation screens just to prove they meditated. The app should get out of the way as fast as possible so they can focus on their life, not the interface.</p>
+        </div>
+    </section>
+
+    <section>
+        <h2>Usability Testing & Practical Fixes</h2>
+        <p>Testing my initial design layouts with real people exposed a few severe roadblocks. Here is exactly what was frustrating users, and the visual changes made to fix them:</p>
+
+        <div class="matrix-row">
+            <div class="matrix-left">
+                <span class="tag-friction">⚠️ User Friction</span>
+                <h4 style="font-size: 15px; margin-bottom: 6px;">Overwhelming Setup Process</h4>
+                <p style="font-size: 13.5px; color: var(--text-muted);">Users had to fill out multi-page forms to set up their morning routine timers before they could start using the app.</p>
+                <div class="matrix-thumb">[ 📸 Image: Long Form Setup Screens ]</div>
+            </div>
+            <div class="matrix-right">
+                <span class="tag-fix">✅ The UI Fix</span>
+                <h4 style="font-size: 15px; margin-bottom: 6px;">One-Tap Fast Starts</h4>
+                <p style="font-size: 13.5px; color: var(--text-muted);">Replaced forms with smart, pre-set recommended times. Users can now launch their routine instantly with a single tap.</p>
+                <div class="matrix-thumb" style="border-color: var(--accent); color: var(--accent);">[ 📸 Image: Instant Launch Screen Layout ]</div>
+            </div>
+        </div>
+
+        <div class="matrix-row">
+            <div class="matrix-left">
+                <span class="tag-friction">⚠️ User Friction</span>
+                <h4 style="font-size: 15px; margin-bottom: 6px;">Constant Interruption and Tapping</h4>
+                <p style="font-size: 13.5px; color: var(--text-muted);">Users had to pick up their phone and tap 'Next' at the end of every individual routine block, breaking their concentration.</p>
+                <div class="matrix-thumb">[ 📸 Image: Pop-ups Interrupting Routine ]</div>
+            </div>
+            <div class="matrix-right">
+                <span class="tag-fix">✅ The UI Fix</span>
+                <h4 style="font-size: 15px; margin-bottom: 6px;">Auto-Advancing Timeline Flow</h4>
+                <p style="font-size: 13.5px; color: var(--text-muted);">Designed an automated dashboard hub. Once the morning session starts, the app moves smoothly from one step to the next on its own.</p>
+                <div class="matrix-thumb" style="border-color: var(--accent); color: var(--accent);">[ 📸 Image: Smooth Auto-Advance Dashboard ]</div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>The Final Solution (2026 Redesign)</h2>
+        <p>By cutting away the clutter, I dropped the total number of app screens down from 40 to 8 simple, focused layouts.</p>
+
+        <div class="comparison-grid">
+            <div class="comparison-card before">
+                <h4>Original App Layout</h4>
+                <div class="stat">40 Screens</div>
+                <p style="font-size:13px; margin-top:4px;">Lots of menus, configurations, and pop-ups.</p>
+            </div>
+            <div class="comparison-card after">
+                <h4>2026 Redesign Layout</h4>
+                <div class="stat">8 Screens</div>
+                <p style="font-size:13px; margin-top:4px; color:var(--accent); font-weight:500;">Hands-free, automated single-flow timeline.</p>
+            </div>
+        </div>
+
+        <div class="image-container" style="background:#EBF3FF;">
+            <span class="icon">📱</span>
+            <span class="label">[ Image: Polished High-Fidelity UI Screens ]</span>
+            <p style="font-size:12px; max-width:400px; margin:0; color:var(--text-muted)">Showcase a clean side-by-side export of your final Figma designs here.</p>
+        </div>
+    </section>
+
+    <div class="project-nav-container">
+        <span style="font-size:13px; color:var(--text-light);">Project 1 of 3</span>
+        <div style="display: flex; gap: 10px;">
+            <a href="index.html" class="p-btn">📋 Back To Portfolio </a>
+            <a href="splitr-case-study.html" class="p-btn next">Next: Split/R →</a>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="container">
+        <p>Miracle Morning Case Study • Built with clean, simple user patterns.</p>
+    </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Charitable — UX Case Study</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #F8FAF8;
+            --surface: #FFFFFF;
+            --text-main: #1C2D20;
+            --text-muted: #4A5A4E;
+            --text-light: #8A9A8E;
+            --accent: #2B5E2F;
+            --accent-bg: #EAF2EB;
+            --border: #E2EAE3;
+            --radius-md: 16px;
+            --radius-sm: 8px;
+            --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+        
+        .back-nav { padding: 32px 0; }
+        .back-link {
+            text-decoration: none; color: var(--text-muted);
+            font-size: 14px; font-weight: 500; display: inline-flex;
+            align-items: center; gap: 6px; transition: var(--transition);
+        }
+        .back-link:hover { color: var(--text-main); transform: translateX(-4px); }
+
+        header { padding: 40px 0 60px; border-bottom: 1px solid var(--border); }
+        .meta-tag {
+            font-size: 12px; font-weight: 600; color: var(--accent);
+            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; display: inline-block;
+        }
+        h1 { font-size: 42px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.2; margin-bottom: 24px; }
+        .lead-text { font-size: 18px; color: var(--text-muted); }
+
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+            padding: 32px 0; border-bottom: 1px solid var(--border); margin-bottom: 48px;
+        }
+        .stat-item h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-light); margin-bottom: 6px; }
+        .stat-item p { font-size: 28px; font-weight: 800; color: var(--accent); line-height: 1.1; }
+        .stat-item span { font-size: 13px; color: var(--text-main); font-weight: 500; }
+
+        section { padding-bottom: 60px; }
+        h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; margin: 40px 0 16px; color: var(--text-main); }
+        h3.subsection-title { font-size: 18px; font-weight: 600; margin: 24px 0 12px; color: var(--text-main); }
+        p { font-size: 15px; color: var(--text-muted); margin-bottom: 20px; }
+        ul { list-style: none; margin-bottom: 24px; }
+        ul li { position: relative; padding-left: 20px; margin-bottom: 10px; font-size: 15px; color: var(--text-muted); }
+        ul li::before { content: "—"; position: absolute; left: 0; color: var(--accent); font-weight: bold; }
+
+        .comp-table {
+            width: 100%; border-collapse: collapse; margin: 28px 0;
+            background: var(--surface); border-radius: var(--radius-md); overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        .comp-table th, .comp-table td { padding: 14px 18px; font-size: 14px; text-align: left; border-bottom: 1px solid var(--border); }
+        .comp-table th { background: #F1F6F2; font-weight: 700; color: var(--text-main); }
+        .comp-table td strong { color: var(--text-main); }
+
+        .persona-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 28px 0; }
+        .persona-card { background: var(--surface); border: 1px solid var(--border); padding: 24px; border-radius: var(--radius-md); }
+        .persona-card h4 { font-size: 16px; font-weight: 700; color: var(--text-main); }
+        .persona-card .tag { font-size: 11px; font-weight: 600; color: var(--accent); text-transform: uppercase; margin-bottom: 12px; display: inline-block; }
+        .persona-quote { font-style: italic; font-size: 13.5px; color: var(--text-muted); border-left: 2px solid var(--accent); padding-left: 12px; margin-top: 12px; }
+
+        .image-container {
+            background: #EFF3EF; border: 1px dashed #C2CDC4;
+            border-radius: var(--radius-md); padding: 50px 24px; text-align: center;
+            margin: 28px 0; color: var(--text-light); font-size: 14px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+        }
+        .image-container span.icon { font-size: 28px; }
+        .image-container span.label { font-weight: 600; color: var(--text-muted); }
+
+        .insight-box {
+            background: var(--accent-bg); border-left: 4px solid var(--accent);
+            padding: 24px; border-radius: 0 var(--radius-md) var(--radius-md) 0; margin: 32px 0;
+        }
+        .insight-box h4 { font-size: 13px; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; letter-spacing: 0.05em; }
+        .insight-box p { margin-bottom: 0; font-size: 14.5px; color: var(--text-main); font-weight: 500; }
+
+        /* Friction/Fix Component Structure */
+        .matrix-row {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px; 
+            background: var(--surface); border: 1px solid var(--border); 
+            border-radius: var(--radius-md); padding: 24px; margin-bottom: 20px;
+        }
+        .matrix-left { border-right: 1px solid var(--border); padding-right: 20px; }
+        .matrix-right { padding-left: 10px; }
+        .tag-friction { display: inline-block; background: #FFE0E6; color: #D81B60; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; margin-bottom: 8px; }
+        .tag-fix { display: inline-block; background: #E8F5E9; color: #2E7D32; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; margin-bottom: 8px; }
+        .matrix-thumb { background: #F4F7F4; border: 1px dashed var(--border); padding: 16px; font-size: 12px; color: var(--text-light); text-align: center; border-radius: var(--radius-sm); margin-top: 12px; }
+
+        /* Bottom Project Pagination Footer Layout */
+        .project-nav-container {
+            border-top: 1px solid var(--border); padding: 48px 0; margin-top: 40px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .p-btn {
+            text-decoration: none; font-size: 13.5px; font-weight: 600; color: var(--text-muted);
+            padding: 10px 18px; border: 1px solid var(--border); border-radius: 30px;
+            background: var(--surface); transition: var(--transition); display: inline-flex; align-items: center; gap: 6px;
+        }
+        .p-btn:hover { border-color: var(--text-light); color: var(--text-main); background: var(--bg); }
+
+        footer { padding: 40px 0; text-align: center; color: var(--text-light); font-size: 13px; border-top: 1px solid var(--border); margin-top: 40px; }
+        @media (max-width: 700px) {
+            .matrix-row { grid-template-columns: 1fr; }
+            .matrix-left { border-right: none; border-bottom: 1px solid var(--border); padding-right: 0; padding-bottom: 20px; }
+            .matrix-right { padding-left: 0; padding-top: 10px; }
+            .persona-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="back-nav">
+        <a href="index.html" class="back-link">← Back to Portfolio</a>
+    </div>
+
+    <header>
+        <span class="meta-tag">UX Case Study — Trust Architecture</span>
+        <h1>Charitable: Building Trust into Digital Giving</h1>
+        <p class="lead-text">Redesigning the online donation process for local mutual aid groups. Replacing confusion with clear expense trackers and simple checkout steps.</p>
+    </header>
+
+    <div class="stats-grid">
+        <div class="stat-item">
+            <h3>Trust Score</h3>
+            <p>+42%</p>
+            <span>Increase in user trust ratings</span>
+        </div>
+        <div class="stat-item">
+            <h3>Flow Speed</h3>
+            <p>3 Taps</p>
+            <span>To complete a donation</span>
+        </div>
+        <div class="stat-item">
+            <h3>Drop-off Rate</h3>
+            <p>-25%</p>
+            <span>Fewer users left at checkout</span>
+        </div>
+    </div>
+
+    <section>
+        <h2>The Trust Problem</h2>
+        <p>People want to support local community causes, but they often back away right on the payment screen. Why? Because donation apps rarely show where the money actually goes. Donors are tired of vague promises; they want to see how their $25 contribution helps. When a payment path masks bank processing fees, users get suspicious and close the app.</p>
+        
+        <div class="image-container">
+            <span class="icon">💸</span>
+            <span class="label">[ Image: Breakdown of Checkout Friction Blocks ]</span>
+            <p style="font-size:12px; max-width:400px; margin:0;">Insert an annotated mockup here showing where typical donation apps confuse users.</p>
+        </div>
+    </section>
+
+    <section>
+        <h2>User Interviews</h2>
+        <p style="margin-bottom: 28px;">I interviewed donors to understand what causes them to hesitate. The research proved that donor trust drops when financial numbers are kept unclear:</p>
+        
+        <div class="persona-grid">
+            <div class="persona-card">
+                <span class="tag">Donor Profile A</span>
+                <h4>The Skeptical Giver</h4>
+                <p style="font-size: 13.5px; margin-top:8px;">Wants clear proof. They hesitate to give to giant non-profits because they worry company overhead costs swallow their money.</p>
+                <div class="persona-quote">"I want to see exactly how my cash fixes things. If it just goes into a massive corporate bank pool, I won't give."</div>
+            </div>
+            <div class="persona-card">
+                <span class="tag">Donor Profile B</span>
+                <h4>The Express Giver</h4>
+                <p style="font-size: 13.5px; margin-top:8px;">Driven by instant urgency. They want to give immediately during local crises, but quit if forced to register a profile password.</p>
+                <div class="persona-quote">"If I see a local crisis, I want to send help in three seconds flat. Do not make me sign up for a profile password layout."</div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Evaluating the Market</h2>
+        <p>To see how other apps handle safety, I audited three major alternatives:</p>
+        
+        <table class="comp-table">
+            <thead>
+                <tr>
+                    <th>Alternative Systems</th>
+                    <th>What They Do Well</th>
+                    <th>Where They Fail</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>GoFundMe</strong></td>
+                    <td>Incredibly powerful for personal emergencies and fast sharing.</td>
+                    <td>Lacks long-term transparency updates. Fees can feel hidden.</td>
+                </tr>
+                <tr>
+                    <td><strong>Charity Navigator</strong></td>
+                    <td>Excellent rating system for tax data and operational costs.</td>
+                    <td>Strictly informational; does not offer a fast direct payment option.</td>
+                </tr>
+                <tr>
+                    <td><strong>Direct Mutual Aid Links</strong></td>
+                    <td>Completely direct through Venmo or cash tags.</td>
+                    <td>Zero built-in verification or security checks for skeptical donors.</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>Testing & Iterative Layout Adjustments</h2>
+        <p>Testing my initial wireframe flows with real donors forced me to make quick layout updates to keep user checkouts smooth:</p>
+
+        <div class="matrix-row">
+            <div class="matrix-left">
+                <span class="tag-friction">⚠️ User Friction</span>
+                <h4 style="font-size: 15px; margin-bottom: 6px;">Confusing Overhead Percentages</h4>
+                <p style="font-size: 13.5px; color: var(--text-muted);">Users felt confused by abstract percentage pie charts explaining management costs. They assumed facts were hidden.</p>
+                <div class="matrix-thumb">[ 📸 Image: Abstract Pie Chart Wireframes ]</div>
+            </div>
+            <div class="matrix-right">
+                <span class="tag-fix">✅ The UI Fix</span>
+                <h4 style="font-size: 15px; margin-bottom: 6px;">Plain Money Receipts</h4>
+                <p style="font-size: 13.5px; color: var(--text-muted);">Replaced charts with a familiar cash layout breaking down exact dollars (e.g., "$22.50 to food boxes, $2.50 to credit processing").</p>
+                <div class="matrix-thumb" style="border-color: var(--accent); color: var(--accent);">[ 📸 Image: Clean Dollar Receipt Layout ]</div>
+            </div>
+        </div>
+
+        <div class="matrix-row">
+            <div class="matrix-left">
+                <span class="tag-friction">⚠️ User Friction</span>
+                <h4 style="font-size: 15px; margin-bottom: 6px;">Hidden Trust Indicators</h4>
+                <p style="font-size: 13.5px; color: var(--text-muted);">Placing security verification seals at the bottom of forms meant users felt anxious before pressing the submit button.</p>
+                <div class="matrix-thumb">[ 📸 Image: Badges Buried at Bottom ]</div>
+            </div>
+            <div class="matrix-right">
+                <span class="tag-fix">✅ The UI Fix</span>
+                <h4 style="font-size: 15px; margin-bottom: 6px;">Upfront Verification Header</h4>
+                <p style="font-size: 13.5px; color: var(--text-muted);">Moved security checkmarks and validation badges to the absolute top header so users feel safe before initiating payment steps.</p>
+                <div class="matrix-thumb" style="border-color: var(--accent); color: var(--accent);">[ 📸 Image: Top Header Security Badges ]</div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Visual Architecture</h2>
+        <p>The layout uses warm, stable forest green tones (`#2B5E2F`) to establish structural security, combined with crisp cream backgrounds to reduce financial anxiety.</p>
+
+        <div class="image-container" style="background: #EAF2EB; padding: 60px 24px;">
+            <span class="icon">📱</span>
+            <span class="label">[ Image: Full Polished High-Fidelity UI Screens ]</span>
+            <p style="font-size:12px; max-width:400px; margin:0; color: var(--text-muted);">Embed your finished, high-fidelity user screen layouts from Figma right here.</p>
+        </div>
+    </section>
+
+    <div class="project-nav-container">
+        <a href="splitr-case-study.html" class="p-btn">← Prev Project</a>
+        <a href="index.html" class="p-btn">📋 Back To Portfolio</a>
+        <span style="font-size:13px; color:var(--text-light);">Project 3 of 3</span>
+    </div>
+</div>
+
+<footer>
+    <div class="container">
+        <p>Charitable Case Study • Designed with scannable structure and transparent user paths.</p>
+    </div>
+</footer>
+
+</body>
+</html>

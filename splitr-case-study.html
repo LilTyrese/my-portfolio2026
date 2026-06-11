@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Split/R — UX Case Study</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #FAFAFA;
+            --surface: #FFFFFF;
+            --text-main: #1A1A1A;
+            --text-muted: #555555;
+            --text-light: #8E8E93;
+            --accent: #E91E63;
+            --accent-bg: #FCE4EC;
+            --border: #EAEAEA;
+            --radius-md: 16px;
+            --radius-sm: 8px;
+            --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+        
+        .back-nav { padding: 32px 0; }
+        .back-link {
+            text-decoration: none; color: var(--text-muted);
+            font-size: 14px; font-weight: 500; display: inline-flex;
+            align-items: center; gap: 6px; transition: var(--transition);
+        }
+        .back-link:hover { color: var(--text-main); transform: translateX(-4px); }
+
+        header { padding: 40px 0 60px; border-bottom: 1px solid var(--border); }
+        .meta-tag {
+            font-size: 12px; font-weight: 600; color: var(--accent);
+            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; display: inline-block;
+        }
+        h1 { font-size: 42px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.2; margin-bottom: 24px; }
+        .lead-text { font-size: 18px; color: var(--text-muted); }
+
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+            padding: 32px 0; border-bottom: 1px solid var(--border); margin-bottom: 48px;
+        }
+        .stat-item h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-light); margin-bottom: 6px; }
+        .stat-item p { font-size: 28px; font-weight: 800; color: var(--accent); line-height: 1.1; }
+        .stat-item span { font-size: 13px; color: var(--text-main); font-weight: 500; }
+
+        section { padding-bottom: 60px; }
+        h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; margin: 40px 0 16px; color: var(--text-main); }
+        h3.subsection-title { font-size: 18px; font-weight: 600; margin: 24px 0 12px; color: var(--text-main); }
+        p { font-size: 15px; color: var(--text-muted); margin-bottom: 20px; }
+        ul { list-style: none; margin-bottom: 24px; }
+        ul li { position: relative; padding-left: 20px; margin-bottom: 10px; font-size: 15px; color: var(--text-muted); }
+        ul li::before { content: "—"; position: absolute; left: 0; color: var(--accent); font-weight: bold; }
+
+        .comp-table {
+            width: 100%; border-collapse: collapse; margin: 28px 0;
+            background: var(--surface); border-radius: var(--radius-md); overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        .comp-table th, .comp-table td { padding: 14px 18px; font-size: 14px; text-align: left; border-bottom: 1px solid var(--border); }
+        .comp-table th { background: #FAFAFA; font-weight: 700; color: var(--text-main); }
+        .comp-table td strong { color: var(--text-main); }
+
+        .persona-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 28px 0; }
+        .persona-card { background: var(--surface); border: 1px solid var(--border); padding: 24px; border-radius: var(--radius-md); }
+        .persona-card h4 { font-size: 16px; font-weight: 700; color: var(--text-main); }
+        .persona-card .tag { font-size: 11px; font-weight: 600; color: var(--accent); text-transform: uppercase; margin-bottom: 12px; display: inline-block; }
+        .persona-quote { font-style: italic; font-size: 13.5px; color: var(--text-muted); border-left: 2px solid var(--accent); padding-left: 12px; margin-top: 12px; }
+
+        .image-container {
+            background: #F5F5F7; border: 1px dashed #D1D1D6;
+            border-radius: var(--radius-md); padding: 50px 24px; text-align: center;
+            margin: 28px 0; color: var(--text-light); font-size: 14px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+        }
+        .image-container span.icon { font-size: 28px; }
+        .image-container span.label { font-weight: 600; color: var(--text-muted); }
+
+        .insight-box {
+            background: var(--accent-bg); border-left: 4px solid var(--accent);
+            padding: 24px; border-radius: 0 var(--radius-md) var(--radius-md) 0; margin: 32px 0;
+        }
+        .insight-box h4 { font-size: 13px; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; letter-spacing: 0.05em; }
+        .insight-box p { margin-bottom: 0; font-size: 14.5px; color: var(--text-main); font-weight: 500; }
+
+        /* Friction/Fix Visual Rows */
+        .matrix-row {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px; 
+            background: var(--surface); border: 1px solid var(--border); 
+            border-radius: var(--radius-md); padding: 24px; margin-bottom: 20px;
+        }
+        .matrix-left { border-right: 1px solid var(--border); padding-right: 20px; }
+        .matrix-right { padding-left: 10px; }
+        .tag-friction { display: inline-block; background: #FFE0E6; color: #D81B60; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; margin-bottom: 8px; }
+        .tag-fix { display: inline-block; background: #E8F5E9; color: #2E7D32; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; margin-bottom: 8px; }
+        .matrix-thumb { background: #F9F9F9; border: 1px dashed var(--border); padding: 16px; font-size: 12px; color: var(--text-light); text-align: center; border-radius: var(--radius-sm); margin-top: 12px; }
+
+        /* Bottom Project Pagination Footer Links */
+        .project-nav-container {
+            border-top: 1px solid var(--border); padding: 48px 0; margin-top: 40px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .p-btn {
+            text-decoration: none; font-size: 13.5px; font-weight: 600; color: var(--text-muted);
+            padding: 10px 18px; border: 1px solid var(--border); border-radius: 30px;
+            background: var(--surface); transition: var(--transition); display: inline-flex; align-items: center; gap: 6px;
+        }
+        .p-btn:hover { border-color: var(--text-light); color: var(--text-main); background: var(--bg); }
+        .p-btn.next { background: var(--text-main); color: var(--surface); border-color: var(--text-main); }
+        .p-btn.next:hover { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+
+        footer { padding: 40px 0; text-align: center; color: var(--text-light); font-size: 13px; border-top: 1px solid var(--border); margin-top: 40px; }
+        @media (max-width: 700px) {
+            .matrix-row { grid-template-columns: 1fr; }
+            .matrix-left { border-right: none; border-bottom: 1px solid var(--border); padding-right: 0; padding-bottom: 20px; }
+            .matrix-right { padding-left: 0; padding-top: 10px; }
+            .persona-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="back-nav">
+        <a href="index.html" class="back-link">← Back to Portfolio</a>
+    </div>
+
+    <header>
+        <span class="meta-tag">UX Case Study — 5-Day Design Sprint</span>
+        <h1>Split/R: Simplifying the Bill Splitting Experience</h1>
+        <p class="lead-text">Rethinking how casual diners divide restaurant bills on a single phone. No math mistakes, no mandatory profiles, and done in under a minute.</p>
+    </header>
+
+    <div class="stats-grid">
+        <div class="stat-item">
+            <h3>Success Rate</h3>
+            <p>5/5</p>
+            <span>Users finished task</span>
+        </div>
+        <div class="stat-item">
+            <h3>Speed Metric</h3>
+            <p>45s</p>
+            <span>Average task time</span>
+        </div>
+        <div class="stat-item">
+            <h3>Old Standard</h3>
+            <p>3m+</p>
+            <span>Using normal calculators</span>
+        </div>
+    </div>
+
+    <section>
+        <h2>The Dinner Table Math Problem</h2>
+        <p>The end of a group dinner can easily turn awkward. Out come the native phone calculators, separate notes apps, and stressful calculations to guess tax and tip. Existing financial apps either require every person at the table to download the app, or they force you to create a shared profile just for a single meal.</p>
+        
+        <div class="image-container">
+            <span class="icon">🍽️</span>
+            <span class="label">[ Image: Split/R Concept Sketches ]</span>
+            <p style="font-size:12px; max-width:400px; margin:0;">Insert a clean picture or concept sketch illustrating the frustration of splitting a bill manually.</p>
+        </div>
+    </section>
+
+    <section>
+        <h2>User Interviews</h2>
+        <p style="margin-bottom: 28px;">I interviewed five group diners to learn where they run into trouble. Looking closely at user answers revealed a clear split between friends:</p>
+        
+        <div class="persona-grid">
+            <div class="persona-card">
+                <span class="tag">Diner Profile A</span>
+                <h4>The Relaxed Card Holder</h4>
+                <p style="font-size: 13.5px; margin-top:8px;">Comfortable with money. They prefer to pay the full bill upfront on their card and let friends pay them back whenever they can.</p>
+                <div class="persona-quote">"It's not a huge deal. I just pick up the check and tell people to Venmo me later."</div>
+            </div>
+            <div class="persona-card">
+                <span class="tag">Diner Profile B</span>
+                <h4>The Budget Tracker</h4>
+                <p style="font-size: 13.5px; margin-top:8px;">Strict financial limits. They feel explicit anxiety when calculating their share at the table, especially in front of others.</p>
+                <div class="persona-quote">"I track what I spend closely. I get nervous when the bill arrives and everyone wants to split evenly."</div>
+            </div>
+        </div>
+
+        <div class="insight-box">
+            <h4>🎯 An Honest Design Strategy</h4>
+            <p>An interface cannot solve a user's personal budget constraints, but it can completely eliminate the math errors, social friction, and delay of dividing a bill.</p>
+        </div>
+    </section>
+
+    <section>
+        <h2>Reviewing Alternatives</h2>
+        <p>Why do existing apps fall short for quick, everyday group dinners?</p>
+        
+        <table class="comp-table">
+            <thead>
+                <tr>
+                    <th>Existing Alternatives</th>
+                    <th>What They Do Well</th>
+                    <th>Where They Fail</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Splitwise</strong></td>
+                    <td>Keeps track of running bills over weeks or months.</td>
+                    <td>Too heavy for a single dinner. Everyone must install it.</td>
+                </tr>
+                <tr>
+                    <td><strong>Venmo / Zelle</strong></td>
+                    <td>Great for fast money transfers.</td>
+                    <td>Requires external calculation; does not assign items.</td>
+                </tr>
+                <tr>
+                    <td><strong>Phone Calculator</strong></td>
+                    <td>Available on every single mobile phone.</td>
+                    <td>Slow, prone to typing mistakes, and lacks tax/tip math.</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>Usability Testing & Revisions</h2>
+        <p>Operating under a strict 5-day timeline forced me to test rough wireframes fast. Here are the clear friction points users experienced, and how the UI layout fixed them:</p>
+
+        <div class="matrix-row">
+            <div class="matrix-left">
+                <span class="tag-friction">⚠️ User Friction</span>
+                <h4 style="font-size: 15px; margin-bottom: 6px;">No Way to Fix Mistakes</h4>
+                <p style="font-size: 13.5px; color: var(--text-muted);">Users felt trapped while assigning receipt item costs because any accidental tap forced them to start the app over from scratch.</p>
+                <div class="matrix-thumb">[ 📸 Image: Wireframes with Missing Back Buttons ]</div>
+            </div>
+            <div class="matrix-right">
+                <span class="tag-fix">✅ The UI Fix</span>
+                <h4 style="font-size: 15px; margin-bottom: 6px;">Global Navigation Safety Net</h4>
+                <p style="font-size: 13.5px; color: var(--text-muted);">Added clear, persistent inline 'Back' chevron links and an instant 'Reset Screen' button to the header of every view layer.</p>
+                <div class="matrix-thumb" style="border-color: var(--accent); color: var(--accent);">[ 📸 Image: Updated UI Header Safe Options ]</div>
+            </div>
+        </div>
+
+        <div class="matrix-row">
+            <div class="matrix-left">
+                <span class="tag-friction">⚠️ User Friction</span>
+                <h4 style="font-size: 15px; margin-bottom: 6px;">Forgotten Menu Items</h4>
+                <p style="font-size: 13.5px; color: var(--text-muted);">Users realized they missed a shared appetizer or a side drink halfway through assigning costs, forcing them to quit their session.</p>
+                <div class="matrix-thumb">[ 📸 Image: Fixed, Rigid App Flow Map ]</div>
+            </div>
+            <div class="matrix-right">
+                <span class="tag-fix">✅ The UI Fix</span>
+                <h4 style="font-size: 15px; margin-bottom: 6px;">On-The-Fly Item Addition</h4>
+                <p style="font-size: 13.5px; color: var(--text-muted);">Placed a persistent floating "+" action button that lets users dynamically add an extra guest or line item at any point mid-calculation.</p>
+                <div class="matrix-thumb" style="border-color: var(--accent); color: var(--accent);">[ 📸 Image: UI Screen with Active Plus Buttons ]</div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Visual Choices</h2>
+        <p>The interface uses clear, high-contrast layouts to work reliably inside dimly lit restaurant spaces:</p>
+        <ul>
+            <li><strong>Colors:</strong> Vibrant Pink (`#E91E63`) provides an energetic, modern tone that breaks away from boring green "banking" systems, mixed with rich dark grays for legibility.</li>
+            <li><strong>Typography:</strong> Bold geometric shapes for headers give the layout personality, while clean, readable body text handles numbers easily.</li>
+        </ul>
+
+        <div class="image-container" style="background: #FFF5F8; padding: 60px 24px;">
+            <span class="icon">📱</span>
+            <span class="label">[ Image: High-Fidelity UI Presentation Mockups ]</span>
+            <p style="font-size:12px; max-width:400px; margin:0; color: var(--text-muted);">Embed your polished, high-fidelity PNG mockups showing the final design layouts here.</p>
+        </div>
+    </section>
+
+    <div class="project-nav-container">
+        <a href="miracle-morning-case-study.html" class="p-btn">← Prev Project</a>
+        <a href="index.html" class="p-btn">📋 Back To Portfolio</a>
+        <a href="charitable-case-study.html" class="p-btn next">Next: Charitable →</a>
+    </div>
+</div>
+
+<footer>
+    <div class="container">
+        <p>Split/R Case Study • Designed with scannable structure and user intent.</p>
+    </div>
+</footer>
+
+</body>
+</html>
