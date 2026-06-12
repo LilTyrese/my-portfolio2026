@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Miracle Morning App — Interactive Prototype</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none; /* prevents text selection during taps */
+        }
+
+        body {
+            background: linear-gradient(145deg, #e2e8f0 0%, #cbd5e1 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 40px 20px;
+        }
+
+        /* Phone frame */
+        .phone {
+            max-width: 380px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 48px;
+            box-shadow: 0 30px 50px -20px rgba(0,0,0,0.4), 0 0 0 8px #1e293b, 0 0 0 12px #334155;
+            overflow: hidden;
+            position: relative;
+            height: 700px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Dynamic screen content */
+        .screen-container {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            background: #ffffff;
+            scroll-behavior: smooth;
+        }
+
+        /* Hide scrollbar for cleaner look */
+        .screen-container::-webkit-scrollbar {
+            width: 4px;
+        }
+        .screen-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .screen-container::-webkit-scrollbar-thumb {
+            background: #0369a1;
+            border-radius: 10px;
+        }
+
+        /* Status bar */
+        .status-bar {
+            background: #ffffff;
+            padding: 12px 20px 6px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            color: #1e293b;
+            border-bottom: 1px solid #eef2ff;
+        }
+
+        /* Screen padding */
+        .screen {
+            padding: 24px 20px 30px 20px;
+        }
+
+        /* Typography */
+        h2 {
+            font-family: 'Poppins', 'Inter', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0369a1, #0ea5e9);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 4px;
+        }
+
+        .date {
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        /* Streak card */
+        .streak-card {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border-radius: 24px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            border: 1px solid #bae6fd;
+        }
+        .streak-number {
+            font-size: 36px;
+            font-weight: 800;
+            color: #0369a1;
+            font-family: 'Poppins', sans-serif;
+        }
+        .streak-label {
+            color: #0369a1;
+            font-weight: 600;
+        }
+
+        /* Routine items */
+        .routine-list {
+            margin-bottom: 24px;
+        }
+        .routine-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 0;
+            border-bottom: 1px solid #f1f5f9;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .routine-item:active {
+            background: #f8fafc;
+        }
+        .checkbox {
+            width: 26px;
+            height: 26px;
+            border: 2px solid #0369a1;
+            border-radius: 8px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            transition: all 0.15s;
+            flex-shrink: 0;
+        }
+        .checkbox.checked {
+            background: #0369a1;
+            border-color: #0369a1;
+        }
+        .checkbox.checked::after {
+            content: "✓";
+        }
+        .activity-emoji {
+            font-size: 24px;
+        }
+        .activity-info {
+            flex: 1;
+        }
+        .activity-name {
+            font-weight: 700;
+            color: #0f172a;
+            font-size: 16px;
+        }
+        .activity-duration {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        .completed-strike {
+            text-decoration: line-through;
+            color: #94a3b8;
+        }
+
+        /* Button */
+        .btn-start {
+            background: linear-gradient(135deg, #0369a1, #0ea5e9);
+            border: none;
+            width: 100%;
+            padding: 16px;
+            border-radius: 60px;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            margin-bottom: 24px;
+            transition: all 0.2s;
+            box-shadow: 0 6px 14px rgba(3,105,161,0.25);
+        }
+        .btn-start:active {
+            transform: scale(0.97);
+        }
+
+        /* Bottom navigation */
+        .bottom-nav {
+            background: #ffffff;
+            border-top: 1px solid #eef2ff;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 16px 14px 16px;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            background: none;
+            border: none;
+            font-size: 12px;
+            color: #94a3b8;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.1s;
+            font-family: 'Inter', sans-serif;
+        }
+        .nav-item.active {
+            color: #0369a1;
+        }
+        .nav-icon {
+            font-size: 22px;
+        }
+
+        /* Progress screen calendar */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+        .cal-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 12px;
+            background: #f1f5f9;
+            color: #334155;
+        }
+        .cal-day.complete {
+            background: linear-gradient(135deg, #0369a1, #0ea5e9);
+            color: white;
+        }
+        .cal-day.today {
+            border: 2px solid #f59e0b;
+            background: white;
+            color: #0369a1;
+            font-weight: 800;
+        }
+        .stat-numbers {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 20px;
+            text-align: center;
+            flex: 1;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: #0369a1;
+        }
+
+        /* Customize screen */
+        .customize-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 0;
+            border-bottom: 1px solid #f1f5f9;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .customize-item.drag-over {
+            background: #eff6ff;
+        }
+        .customize-item.dragging {
+            opacity: 0.55;
+        }
+        .drag-icon {
+            color: #cbd5e1;
+            font-size: 18px;
+            cursor: grab;
+        }
+        .time-badge {
+            background: #e0f2fe;
+            padding: 4px 10px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #0369a1;
+        }
+
+        /* Settings */
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .toggle-switch {
+            width: 48px;
+            height: 26px;
+            background: #0369a1;
+            border-radius: 30px;
+            position: relative;
+            cursor: pointer;
+        }
+        .toggle-switch.off {
+            background: #cbd5e1;
+        }
+        .toggle-knob {
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 22px;
+            position: absolute;
+            top: 2px;
+            right: 4px;
+            transition: 0.1s;
+        }
+        .toggle-switch.off .toggle-knob {
+            left: 4px;
+            right: auto;
+        }
+
+        .back-button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            margin-bottom: 12px;
+            color: #0369a1;
+        }
+
+        .title-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .completion-celebration {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .check-large {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #0369a1, #0ea5e9);
+            border-radius: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+<div class="phone">
+    <div class="status-bar">
+        <span>9:41</span>
+        <span>📶 🔋 100%</span>
+    </div>
+    <div class="screen-container" id="screenContainer">
+        <!-- Dynamic screen content injected via JS -->
+    </div>
+    <div class="bottom-nav" id="bottomNav">
+        <button class="nav-item" data-screen="home">
+            <span class="nav-icon">🏠</span>
+            <span>Home</span>
+        </button>
+        <button class="nav-item" data-screen="progress">
+            <span class="nav-icon">📊</span>
+            <span>Progress</span>
+        </button>
+        <button class="nav-item" data-screen="customize">
+            <span class="nav-icon">✏️</span>
+            <span>Customize</span>
+        </button>
+        <button class="nav-item" data-screen="settings">
+            <span class="nav-icon">⚙️</span>
+            <span>Settings</span>
+        </button>
+    </div>
+</div>
+
+<script>
+    // ---------- APP STATE ----------
+    let currentScreen = "home";   // home, progress, customize, settings, timer, completion
+    let streak = 12;
+    let completedActivities = [true, true, false, false, false, false]; // silence, affirmations, visualization, exercise, reading, scribing
+    const activityNames = ["Silence", "Affirmations", "Visualization", "Exercise", "Reading", "Scribing"];
+    const activityEmojis = ["🧘", "💪", "✨", "🏃", "📖", "✍️"];
+    const activityDurations = ["5 min", "3 min", "5 min", "20 min", "20 min", "5 min"];
+    const activityOrder = [0, 1, 2, 3, 4, 5];
+    let dragSrcPos = null;
+    const autoAdvanceDelay = 5;
+    let autoAdvanceRemaining = autoAdvanceDelay;
+    
+    // For timer simulation
+    let timerActive = false;
+    let timerActivityIndex = null;
+    let timerInterval = null;
+    let secondsLeft = 0;
+    
+    // Helper to update streak based on completed count
+    function updateStreakFromCompletion() {
+        const allCompleted = completedActivities.every(v => v === true);
+        if (allCompleted) {
+            // in real app, would check if already completed today, but for demo we increment once per full completion
+            if (!window.todayCompletedFlag) {
+                streak++;
+                window.todayCompletedFlag = true;
+            }
+        } else {
+            window.todayCompletedFlag = false;
+        }
+    }
+    
+    // toggle individual activity
+    function toggleActivity(index) {
+        if (timerActive) return; // can't toggle while timer running
+        completedActivities[index] = !completedActivities[index];
+        updateStreakFromCompletion();
+        renderCurrentScreen();
+    }
+    
+    function getFirstIncompleteIndex() {
+        return activityOrder.find(idx => !completedActivities[idx]);
+    }
+
+    function getNextIncompleteIndex(currentIndex) {
+        const currentPos = activityOrder.indexOf(currentIndex);
+        return activityOrder.slice(currentPos + 1).find(idx => !completedActivities[idx]);
+    }
+
+    // start routine from home (opens timer for first incomplete activity)
+    function resetAutoAdvance() {
+        autoAdvanceRemaining = autoAdvanceDelay;
+    }
+
+    function startRoutine() {
+        let firstIncomplete = getFirstIncompleteIndex();
+        if (firstIncomplete === undefined) {
+            // all done already -> show completion
+            currentScreen = "completion";
+            renderCurrentScreen();
+            return;
+        }
+        resetAutoAdvance();
+        // open timer for that activity
+        timerActivityIndex = firstIncomplete;
+        secondsLeft = parseInt(activityDurations[firstIncomplete]) * 60;
+        if (isNaN(secondsLeft)) secondsLeft = 300;
+        timerActive = true;
+        currentScreen = "timer";
+        renderCurrentScreen();
+        startTimerCountdown();
+    }
+    
+    function startTimerCountdown() {
+        if (timerInterval) clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            if (!timerActive) return;
+            if (secondsLeft <= 0) {
+                // complete current activity
+                clearInterval(timerInterval);
+                timerInterval = null;
+                completedActivities[timerActivityIndex] = true;
+                timerActive = false;
+                updateStreakFromCompletion();
+                // check if all done
+                if (completedActivities.every(v => v === true)) {
+                    currentScreen = "completion";
+                    renderCurrentScreen();
+                } else {
+                    // move to next incomplete in the current routine order
+                    let nextIndex = getNextIncompleteIndex(timerActivityIndex);
+                    if (nextIndex !== undefined) {
+                        resetAutoAdvance();
+                        timerActivityIndex = nextIndex;
+                        secondsLeft = parseInt(activityDurations[nextIndex]) * 60;
+                        if (isNaN(secondsLeft)) secondsLeft = 300;
+                        renderCurrentScreen(); // refresh timer display
+                        startTimerCountdown();
+                    } else {
+                        currentScreen = "completion";
+                        renderCurrentScreen();
+                    }
+                }
+                renderCurrentScreen();
+            } else {
+                secondsLeft--;
+                if (autoAdvanceRemaining > 0) {
+                    autoAdvanceRemaining--;
+                }
+                const timerElement = document.getElementById("timerDisplay");
+                if (timerElement) {
+                    let mins = Math.floor(secondsLeft / 60);
+                    let secs = secondsLeft % 60;
+                    timerElement.innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+                }
+                const autoElement = document.getElementById("autoAdvanceCountdown");
+                if (autoElement) {
+                    autoElement.innerText = autoAdvanceRemaining;
+                }
+                if (autoAdvanceRemaining <= 0) {
+                    finishTimerManually();
+                    return;
+                }
+                // update progress text
+                const progElement = document.getElementById("timerProgress");
+                if (progElement) {
+                    let completedCount = completedActivities.filter(v => v === true).length;
+                    progElement.innerText = `${completedCount} of 6 complete • Keep going`;
+                }
+            }
+        }, 1000);
+    }
+    
+    function finishTimerManually() {
+        if (timerInterval) clearInterval(timerInterval);
+        timerInterval = null;
+        completedActivities[timerActivityIndex] = true;
+        timerActive = false;
+        updateStreakFromCompletion();
+        if (completedActivities.every(v => v === true)) {
+            currentScreen = "completion";
+            renderCurrentScreen();
+        } else {
+            let nextIndex = getNextIncompleteIndex(timerActivityIndex);
+            if (nextIndex !== undefined) {
+                resetAutoAdvance();
+                timerActivityIndex = nextIndex;
+                secondsLeft = parseInt(activityDurations[nextIndex]) * 60;
+                if (isNaN(secondsLeft)) secondsLeft = 300;
+                renderCurrentScreen();
+                startTimerCountdown();
+            } else {
+                currentScreen = "completion";
+                renderCurrentScreen();
+            }
+        }
+    }
+    
+    function exitTimer() {
+        if (timerInterval) clearInterval(timerInterval);
+        timerInterval = null;
+        timerActive = false;
+        currentScreen = "home";
+        renderCurrentScreen();
+    }
+    
+    function completeFromCompletion() {
+        currentScreen = "home";
+        renderCurrentScreen();
+    }
+    
+    // Rendering engine
+    function renderCurrentScreen() {
+        const container = document.getElementById("screenContainer");
+        if (!container) return;
+        
+        if (currentScreen === "home") {
+            container.innerHTML = renderHomeScreen();
+        } else if (currentScreen === "progress") {
+            container.innerHTML = renderProgressScreen();
+        } else if (currentScreen === "customize") {
+            container.innerHTML = renderCustomizeScreen();
+        } else if (currentScreen === "settings") {
+            container.innerHTML = renderSettingsScreen();
+        } else if (currentScreen === "timer") {
+            container.innerHTML = renderTimerScreen();
+        } else if (currentScreen === "completion") {
+            container.innerHTML = renderCompletionScreen();
+        }
+        
+        // update bottom nav active class
+        document.querySelectorAll(".nav-item").forEach(btn => {
+            const screenVal = btn.getAttribute("data-screen");
+            if ((screenVal === currentScreen) || (currentScreen === "timer" && screenVal === "home") || (currentScreen === "completion" && screenVal === "home")) {
+                btn.classList.add("active");
+            } else {
+                btn.classList.remove("active");
+            }
+        });
+    }
+    
+    function renderHomeScreen() {
+        let completedCount = completedActivities.filter(v => v === true).length;
+        let allDone = completedCount === 6;
+        let itemsHtml = "";
+        for (let pos = 0; pos < activityOrder.length; pos++) {
+            const i = activityOrder[pos];
+            let isChecked = completedActivities[i];
+            itemsHtml += `
+                <div class="routine-item" onclick="toggleActivity(${i})">
+                    <div class="checkbox ${isChecked ? 'checked' : ''}"></div>
+                    <div class="activity-emoji">${activityEmojis[i]}</div>
+                    <div class="activity-info">
+                        <div class="activity-name ${isChecked ? 'completed-strike' : ''}">${activityNames[i]}</div>
+                        <div class="activity-duration">${activityDurations[i]}</div>
+                    </div>
+                </div>
+            `;
+        }
+        return `
+            <div class="screen">
+                <h2>Miracle Morning</h2>
+                <div class="date">Monday, June 2</div>
+                <div class="streak-card">
+                    <span class="streak-number">${streak}</span>
+                    <span class="streak-label">day streak 🔥</span>
+                </div>
+                <div class="routine-list">
+                    ${itemsHtml}
+                </div>
+                <button class="btn-start" onclick="startRoutine()">${allDone ? "Celebrate ✨" : "Start Routine 🌅"}</button>
+            </div>
+        `;
+    }
+    
+    function renderProgressScreen() {
+        // simulate calendar heatmap for last 28 days
+        let daysInMonth = 28;
+        let calendarHtml = "";
+        for (let i = 1; i <= daysInMonth; i++) {
+            let isComplete = (i % 3 === 0) || (i % 5 === 0) || (i > 20 && i % 2 === 0);
+            if (i === 28) isComplete = true;
+            let todayClass = (i === 28) ? "today" : "";
+            let completeClass = isComplete ? "complete" : "";
+            calendarHtml += `<div class="cal-day ${completeClass} ${todayClass}">${i}</div>`;
+        }
+        let completionRate = Math.round((completedActivities.filter(v=>v===true).length / 6) * 100);
+        return `
+            <div class="screen">
+                <div class="title-row">
+                    <button class="back-button" onclick="currentScreen='home'; renderCurrentScreen();">←</button>
+                    <h2 style="margin-bottom:0;">Progress</h2>
+                </div>
+                <div class="stat-numbers">
+                    <div class="stat-card"><div class="stat-value">${streak}</div><div>Streak</div></div>
+                    <div class="stat-card"><div class="stat-value">${completionRate}%</div><div>Today</div></div>
+                    <div class="stat-card"><div class="stat-value">87%</div><div>Monthly</div></div>
+                </div>
+                <div class="streak-card" style="margin-top:8px;">
+                    <span class="streak-label">🔥 Last 28 days</span>
+                </div>
+                <div class="calendar-grid">
+                    ${calendarHtml}
+                </div>
+                <p style="font-size:12px; color:#64748b; text-align:center;">Complete days are highlighted in blue.</p>
+            </div>
+        `;
+    }
+    
+    function renderCustomizeScreen() {
+        let itemsHtml = "";
+        for (let pos = 0; pos < activityOrder.length; pos++) {
+            const i = activityOrder[pos];
+            itemsHtml += `
+                <div class="customize-item" draggable="true" data-pos="${pos}"
+                    ondragstart="onDragStart(event)"
+                    ondragover="onDragOver(event)"
+                    ondragleave="onDragLeave(event)"
+                    ondrop="onDrop(event)"
+                    ondragend="onDragEnd(event)">
+                    <span class="drag-icon">⋮⋮</span>
+                    <span class="activity-emoji">${activityEmojis[i]}</span>
+                    <div class="activity-info">
+                        <div class="activity-name">${activityNames[i]}</div>
+                    </div>
+                    <span class="time-badge">${activityDurations[i]}</span>
+                </div>
+            `;
+        }
+        return `
+            <div class="screen">
+                <div class="title-row">
+                    <button class="back-button" onclick="currentScreen='home'; renderCurrentScreen();">←</button>
+                    <h2 style="margin-bottom:0;">Customize Routine</h2>
+                </div>
+                <p style="margin-bottom:12px; color:#475569;">Drag to reorder • Tap to edit duration</p>
+                <div class="routine-list">
+                    ${itemsHtml}
+                </div>
+                <button class="btn-start" style="background:#f1f5f9; color:#0369a1; box-shadow:none;" onclick="alert('In a real app you could add new activities or change order.')">+ Add Activity</button>
+            </div>
+        `;
+    }
+
+    function onDragStart(event) {
+        dragSrcPos = Number(event.currentTarget.dataset.pos);
+        event.dataTransfer.effectAllowed = 'move';
+        event.dataTransfer.setData('text/plain', 'drag');
+        event.currentTarget.classList.add('dragging');
+    }
+
+    function onDragOver(event) {
+        event.preventDefault();
+        const target = event.currentTarget;
+        if (target && target.classList.contains('customize-item')) {
+            target.classList.add('drag-over');
+        }
+    }
+
+    function onDragLeave(event) {
+        const target = event.currentTarget;
+        if (target && target.classList.contains('customize-item')) {
+            target.classList.remove('drag-over');
+        }
+    }
+
+    function onDrop(event) {
+        event.preventDefault();
+        const target = event.currentTarget;
+        const targetPos = Number(target.dataset.pos);
+        if (dragSrcPos === null || targetPos === dragSrcPos) return;
+        const [moved] = activityOrder.splice(dragSrcPos, 1);
+        activityOrder.splice(targetPos, 0, moved);
+        dragSrcPos = null;
+        renderCurrentScreen();
+    }
+
+    function onDragEnd(event) {
+        document.querySelectorAll('.customize-item').forEach(el => {
+            el.classList.remove('dragging', 'drag-over');
+        });
+        dragSrcPos = null;
+    }
+    
+    function renderSettingsScreen() {
+        return `
+            <div class="screen">
+                <div class="title-row">
+                    <button class="back-button" onclick="currentScreen='home'; renderCurrentScreen();">←</button>
+                    <h2 style="margin-bottom:0;">Settings</h2>
+                </div>
+                <div class="setting-row">
+                    <span style="font-weight:600;">Daily Reminder</span>
+                    <div class="toggle-switch" onclick="this.classList.toggle('off')"><div class="toggle-knob"></div></div>
+                </div>
+                <div class="setting-row">
+                    <span style="font-weight:600;">Reminder Time</span>
+                    <span style="color:#0369a1; font-weight:600;">6:00 AM</span>
+                </div>
+                <div class="setting-row">
+                    <span style="font-weight:600;">Sound Effects</span>
+                    <div class="toggle-switch off" onclick="this.classList.toggle('off')"><div class="toggle-knob"></div></div>
+                </div>
+                <div class="streak-card" style="margin-top:24px; justify-content:space-between;">
+                    <span>App Version</span>
+                    <span style="font-weight:600;">2.0 (2026)</span>
+                </div>
+                <div class="streak-card">
+                    <span>Based on "The Miracle Morning" by Hal Elrod</span>
+                </div>
+            </div>
+        `;
+    }
+    
+    function renderTimerScreen() {
+        let mins = Math.floor(secondsLeft / 60);
+        let secs = secondsLeft % 60;
+        let activity = activityNames[timerActivityIndex];
+        let emoji = activityEmojis[timerActivityIndex];
+        let completedCount = completedActivities.filter(v=>v===true).length;
+        let isLastStep = getNextIncompleteIndex(timerActivityIndex) === undefined;
+        let actionLabel = isLastStep ? "Done ✓" : "Next Step →";
+        return `
+            <div class="screen" style="text-align:center;">
+                <div class="title-row" style="justify-content:space-between;">
+                    <button class="back-button" onclick="exitTimer()">✕</button>
+                    <span style="font-size:13px; color:#64748b;">${completedCount} of 6 complete</span>
+                    <div style="width:24px;"></div>
+                </div>
+                <div style="margin-top:20px;">
+                    <span style="font-size:48px;">${emoji}</span>
+                    <h2 style="font-size:32px;">${activity}</h2>
+                    <p id="timerProgress" style="color:#64748b; margin:8px 0 24px;">${completedCount} of 6 complete • Keep going</p>
+                    <div style="width:200px; height:200px; margin:0 auto; background:#f0f9ff; border-radius:100px; display:flex; align-items:center; justify-content:center; border:6px solid #0ea5e9;">
+                        <span id="timerDisplay" style="font-size:52px; font-weight:800; color:#0369a1;">${mins}:${secs < 10 ? '0' : ''}${secs}</span>
+                    </div>
+                    <p id="autoAdvanceInfo" style="font-size:13px; color:#64748b; margin:16px 0 0;">Auto-advancing in <strong id="autoAdvanceCountdown">${autoAdvanceRemaining}</strong>s unless you press ${isLastStep ? 'Done' : 'Next'}.</p>
+                    <button class="btn-start" style="margin-top:24px;" onclick="finishTimerManually()">${actionLabel}</button>
+                </div>
+            </div>
+        `;
+    }
+    
+    function renderCompletionScreen() {
+        return `
+            <div class="screen completion-celebration">
+                <div class="check-large">✨</div>
+                <h2 style="font-size:32px; margin:16px 0 8px;">Well Done!</h2>
+                <p style="color:#475569;">You completed your Miracle Morning routine.</p>
+                <div class="streak-card" style="justify-content:center; gap:12px; margin:24px 0;">
+                    <span class="streak-number">${streak}</span>
+                    <span class="streak-label">Day Streak 🔥</span>
+                </div>
+                <button class="btn-start" onclick="completeFromCompletion()">Start tomorrow ✨</button>
+            </div>
+        `;
+    }
+    
+    // navigation event binding after each render, but we use global functions + reattach
+    window.toggleActivity = toggleActivity;
+    window.startRoutine = startRoutine;
+    window.exitTimer = exitTimer;
+    window.finishTimerManually = finishTimerManually;
+    window.completeFromCompletion = completeFromCompletion;
+    
+    document.querySelectorAll(".nav-item").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            const targetScreen = btn.getAttribute("data-screen");
+            if (timerActive && targetScreen !== "home") return; // prevent while timer running
+            if (targetScreen === "home") currentScreen = "home";
+            if (targetScreen === "progress") currentScreen = "progress";
+            if (targetScreen === "customize") currentScreen = "customize";
+            if (targetScreen === "settings") currentScreen = "settings";
+            renderCurrentScreen();
+        });
+    });
+    
+    // initial render
+    renderCurrentScreen();
+</script>
+</body>
+</html>

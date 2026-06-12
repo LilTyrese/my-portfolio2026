@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Split/R — Interactive Mobile Prototype</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Sans:wght@500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e0e5ec 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .phone {
+            width: 380px;
+            height: 780px;
+            background: #1a1a1a;
+            border-radius: 44px;
+            padding: 18px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .phone::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 130px;
+            height: 28px;
+            background: #1a1a1a;
+            border-radius: 0 0 22px 22px;
+            z-index: 12;
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 32px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .screen-content {
+            overflow-y: auto;
+            padding: 18px 20px 20px;
+            flex: 1;
+        }
+
+        .screen-content::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .screen-title {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+        }
+
+        .screen-subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 18px;
+        }
+
+        .home-hero {
+            background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
+            border-radius: 28px;
+            color: white;
+            padding: 28px 20px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .home-hero::after {
+            content: '';
+            position: absolute;
+            right: -50px;
+            top: -40px;
+            width: 180px;
+            height: 180px;
+            background: rgba(255,255,255,0.12);
+            border-radius: 50%;
+        }
+
+        .logo-v3 {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 52px;
+            font-weight: 900;
+            margin-bottom: 10px;
+            line-height: 0.9;
+        }
+
+        .tagline-v3 {
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1.35;
+            margin-bottom: 24px;
+            max-width: 260px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .stat-box {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(4px);
+            border-radius: 20px;
+            padding: 14px 10px;
+            text-align: center;
+        }
+
+        .stat-icon {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .stat-text {
+            font-size: 12px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .wide-btn,
+        .start-btn-v3,
+        .scan-btn,
+        .continue-primary,
+        .exit-btn {
+            width: 100%;
+            border: none;
+            border-radius: 22px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .start-btn-v3,
+        .scan-btn,
+        .continue-primary {
+            background: #e91e63;
+            color: white;
+            padding: 16px 18px;
+            font-size: 16px;
+            font-weight: 700;
+            box-shadow: 0 8px 20px rgba(233, 30, 99, 0.24);
+        }
+
+        .start-btn-v3:active,
+        .scan-btn:active,
+        .continue-primary:active,
+        .exit-btn:active {
+            transform: scale(0.97);
+        }
+
+        .manual-link-wrapper {
+            text-align: center;
+            margin-top: 12px;
+        }
+
+        .manual-link {
+            display: inline-block;
+            color: #6b7280;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: underline;
+            background: transparent;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .manual-link:active {
+            opacity: 0.8;
+        }
+
+        .back-arrow {
+            font-size: 28px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-block;
+            margin-bottom: 14px;
+            color: #1a1a1a;
+        }
+
+        .camera-box {
+            background: #1a1a1a;
+            border-radius: 28px;
+            height: 340px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 16px 0;
+            position: relative;
+        }
+
+        .scan-frame {
+            position: absolute;
+            width: 78%;
+            height: 54%;
+            border: 2px dashed rgba(233,30,99,0.7);
+            border-radius: 24px;
+        }
+
+        .camera-icon {
+            font-size: 54px;
+            margin-bottom: 12px;
+            opacity: 0.7;
+        }
+
+        .camera-text {
+            color: white;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .selection-screen,
+        .summary-screen,
+        .payment-screen {
+            padding: 0;
+            background: #fafafa;
+            min-height: 100%;
+        }
+
+        .total-amount {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 44px;
+            font-weight: 800;
+            margin-top: 6px;
+        }
+
+        .person-indicator {
+            background: white;
+            padding: 14px;
+            border-radius: 20px;
+            margin: 14px 0 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .item {
+            background: white;
+            border: 2px solid #eee;
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: transform 0.15s ease, border-color 0.15s ease;
+        }
+
+        .item:hover { transform: translateY(-1px); }
+
+        .item.selected-p1 { background: #fff0f5; border-color: #e91e63; }
+        .item.selected-p2 { background: #e6f7ff; border-color: #40c4ff; }
+
+        .item-name { font-weight: 700; margin-bottom: 8px; }
+        .item-price { font-weight: 800; }
+
+        .action-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 14px 0 8px;
+        }
+
+        .back-button-icon {
+            background: #f0f0f0;
+            width: 52px;
+            height: 52px;
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            cursor: pointer;
+            color: #1a1a1a;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .person-card {
+            background: white;
+            border-radius: 24px;
+            padding: 18px;
+            margin-bottom: 18px;
+            border-left: 6px solid #e91e63;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+
+        .person-card.p2 { border-left-color: #40c4ff; }
+
+        .person-total {
+            font-size: 28px;
+            font-weight: 800;
+            color: #e91e63;
+        }
+
+        .person-card.p2 .person-total { color: #40c4ff; }
+
+        .meal-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .payment-option {
+            background: white;
+            border-radius: 20px;
+            padding: 18px;
+            margin-bottom: 12px;
+            border: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .payment-option:hover { background: #fafafa; }
+
+        .exit-btn {
+            background: #1a1a1a;
+            color: white;
+            padding: 18px;
+            font-weight: 700;
+            font-size: 16px;
+            border-radius: 20px;
+            margin-top: 8px;
+        }
+
+        .startover-link {
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .startover-link a {
+            color: #888;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            border-bottom: 1px dashed #ccc;
+            cursor: pointer;
+        }
+
+        .demo-note {
+            font-size: 11px;
+            color: #aaa;
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        .toast-msg {
+            font-size: 12px;
+            color: #e91e63;
+            font-weight: 500;
+            text-align: center;
+            margin-top: 12px;
+            min-height: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="screen">
+            <div class="screen-content" id="screenContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const itemsData = [
+            { id: 0, name: "Pasta & Garlic Bread, w/ Side Salad", price: 13.45 },
+            { id: 1, name: "Cheeseburger w/ Fries", price: 7.89 },
+            { id: 2, name: "Oreo Dessert w/ Milkshake", price: 8.99 },
+            { id: 3, name: "Cheesecake w/ Extra Frosting", price: 9.45 }
+        ];
+        const baseItemsTotal = itemsData.reduce((sum, i) => sum + i.price, 0);
+        const fullBillTotal = 86.45;
+        const taxAndTipTotal = fullBillTotal - baseItemsTotal;
+
+        const persons = {
+            1: { name: "Person 1", emoji: "☕", color: "#e91e63", lightBg: "#fff0f5" },
+            2: { name: "Person 2", emoji: "🍕", color: "#40c4ff", lightBg: "#e6f7ff" }
+        };
+
+        let currentScreen = 'home';
+        let activePerson = 1;
+        let currentAssignment = [null, null, null, null];
+        let toastTimer = null;
+
+        function getSummaryData() {
+            const personItems = { 1: [], 2: [] };
+            for (let i = 0; i < itemsData.length; i++) {
+                const assigned = currentAssignment[i];
+                if (assigned === 1) personItems[1].push(itemsData[i]);
+                if (assigned === 2) personItems[2].push(itemsData[i]);
+            }
+            const subtotals = { 1: 0, 2: 0 };
+            for (let p of [1, 2]) subtotals[p] = personItems[p].reduce((sum, it) => sum + it.price, 0);
+            const totalItemsSum = subtotals[1] + subtotals[2];
+            const taxTipSplit = { 1: 0, 2: 0 };
+            if (totalItemsSum > 0) {
+                taxTipSplit[1] = (subtotals[1] / totalItemsSum) * taxAndTipTotal;
+                taxTipSplit[2] = (subtotals[2] / totalItemsSum) * taxAndTipTotal;
+            } else {
+                taxTipSplit[1] = taxAndTipTotal / 2;
+                taxTipSplit[2] = taxAndTipTotal / 2;
+            }
+            return {
+                personItems,
+                subtotals,
+                taxTipSplit,
+                finalOwed: {
+                    1: subtotals[1] + taxTipSplit[1],
+                    2: subtotals[2] + taxTipSplit[2]
+                }
+            };
+        }
+
+        function showToast(message) {
+            const screenContent = document.getElementById('screenContent');
+            const toast = screenContent.querySelector('.toast-msg');
+            if (!toast) return;
+            toast.textContent = message;
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => { toast.textContent = ''; }, 2000);
+        }
+
+        function renderHomeScreen() {
+            return `
+                <div class="home-hero">
+                    <div class="logo-v3">Split/R</div>
+                    <div class="tagline-v3">The fastest way to split a bill without the guesswork.</div>
+                    <div class="stats-grid">
+                        <div class="stat-box"><div class="stat-icon">⚡</div><div class="stat-text">Split in &lt;60s</div></div>
+                        <div class="stat-box"><div class="stat-icon">📷</div><div class="stat-text">Scan or manual</div></div>
+                        <div class="stat-box"><div class="stat-icon">🎯</div><div class="stat-text">Tax + tip done</div></div>
+                        <div class="stat-box"><div class="stat-icon">💳</div><div class="stat-text">Pay any way</div></div>
+                    </div>
+                </div>
+                <button class="start-btn-v3" id="homeStartBtn">Let's Start →</button>
+                <p class="demo-note">Tap to begin one smooth dinner split flow.</p>
+            `;
+        }
+
+        function renderScanScreen() {
+            return `
+                <div>
+                    <div class="back-arrow" id="backFromScan">←</div>
+                    <div class="screen-title">Scan Your Receipt</div>
+                    <div class="screen-subtitle">Position the receipt inside the frame to start.</div>
+                    <div class="camera-box">
+                        <div class="scan-frame"></div>
+                        <div class="camera-icon">📷</div>
+                        <div class="camera-text">Tap to capture</div>
+                    </div>
+                </div>
+                <div>
+                    <button class="scan-btn" id="captureBtn">Capture Receipt</button>
+                    <div class="manual-link-wrapper">
+                        <a class="manual-link" id="manualEntryBtn" href="#">Enter Items Manually</a>
+                    </div>
+                    <p class="demo-note">This demo moves to item assignment either way.</p>
+                </div>
+            `;
+        }
+
+        function renderSelectionScreen() {
+            const itemsHtml = itemsData.map((item, idx) => {
+                const assigned = currentAssignment[idx];
+                const selectedClass = assigned === 1 ? 'selected-p1' : assigned === 2 ? 'selected-p2' : '';
+                const assignedLabel = assigned ? `<div style="margin-top:6px; font-size:12px; font-weight:500; color:${persons[assigned].color}">✓ ${persons[assigned].name}</div>` : '<div style="margin-top:6px; font-size:11px; color:#aaa;">tap to assign</div>';
+                return `
+                    <div class="item ${selectedClass}" data-item="${idx}">
+                        <div class="item-top" style="display:flex; justify-content:space-between;">
+                            <div class="item-name">${item.name}</div>
+                            <div class="item-price">$${item.price.toFixed(2)}</div>
+                        </div>
+                        <div style="display:flex; gap:8px; margin-top:8px; font-size:20px;">
+                            <span style="opacity:${assigned === 1 ? '1' : '0.3'}">☕</span>
+                            <span style="opacity:${assigned === 2 ? '1' : '0.3'}">🍕</span>
+                        </div>
+                        ${assignedLabel}
+                    </div>
+                `;
+            }).join('');
+
+            return `
+                <div>
+                    <div class="back-arrow" id="backFromSelection">←</div>
+                    <div class="screen-title">Assign Items</div>
+                    <div class="screen-subtitle">Tap a menu item to assign it to the active person.</div>
+                    <div style="background:white; border-radius:24px; padding:16px; margin-bottom:16px;">
+                        <div style="color:#666;">Total Bill</div>
+                        <div class="total-amount">$${fullBillTotal.toFixed(2)}</div>
+                    </div>
+                    <div class="person-indicator" id="personIndicator">
+                        <span>Assigning to:</span>
+                        <span id="activePersonLabel" style="font-weight:800; background:${persons[activePerson].color}; color:white; padding:4px 12px; border-radius:40px;">${persons[activePerson].name}</span>
+                        <span style="margin-left:auto; font-size:20px;">${persons[activePerson].emoji}</span>
+                    </div>
+                    ${itemsHtml}
+                </div>
+                <div>
+                    <div class="action-row">
+                        <div class="back-button-icon" id="resetItemsIcon">↻</div>
+                        <button class="continue-primary" id="continueToSummaryBtn">Continue →</button>
+                    </div>
+                    <p class="demo-note">Tap the indicator to switch between people. Tap an item to assign or clear it.</p>
+                </div>
+            `;
+        }
+
+        function renderSummaryScreen() {
+            const data = getSummaryData();
+            const personHtml = [1,2].map(p => {
+                const itemsList = data.personItems[p];
+                const itemContent = itemsList.length ? itemsList.map(item => `
+                    <div class="meal-item"><span>${item.name}</span><span>$${item.price.toFixed(2)}</span></div>
+                `).join('') : '<div style="font-size:13px; color:#888;">No items assigned</div>';
+
+                return `
+                    <div class="person-card ${p === 2 ? 'p2' : ''}">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                            <div><span style="font-size:24px;">${persons[p].emoji}</span> <strong style="font-size:18px;">${persons[p].name}</strong></div>
+                            <div class="person-total" style="color:${persons[p].color};">$${data.finalOwed[p].toFixed(2)}</div>
+                        </div>
+                        <div style="margin-bottom:12px;">${itemContent}</div>
+                        <div style="border-top:1px solid #eee; padding-top:8px; font-size:13px; display:flex; justify-content:space-between;">
+                            <span>Tax & tip</span>
+                            <span>$${data.taxTipSplit[p].toFixed(2)}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            return `
+                <div>
+                    <div class="back-arrow" id="backFromSummaryBtn">←</div>
+                    <div class="screen-title">Summary</div>
+                    <div class="screen-subtitle">Review each person's owed total before payment.</div>
+                    <div style="background:white; border-radius:24px; padding:16px; text-align:center; margin-bottom:16px;">
+                        <div style="color:#666;">Bill Total</div>
+                        <div class="total-amount">$${fullBillTotal.toFixed(2)}</div>
+                    </div>
+                    ${personHtml}
+                </div>
+                <div>
+                    <button class="continue-primary" id="summaryContinueBtn">Continue →</button>
+                    <p class="demo-note">If something looks off, go back and adjust item assignments.</p>
+                </div>
+            `;
+        }
+
+        function renderPaymentScreen() {
+            const data = getSummaryData();
+            return `
+                <div>
+                    <div class="back-arrow" id="backFromPayment">←</div>
+                    <div class="screen-title">How will you pay?</div>
+                    <div class="screen-subtitle">Choose the easiest way to collect or settle up.</div>
+                    <div class="payment-summary" style="background:white; border-radius:20px; padding:16px; margin-bottom:18px;">
+                        <div style="font-weight:700; margin-bottom:12px;">Split Summary</div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>☕ Person 1</span><strong>$${data.finalOwed[1].toFixed(2)}</strong></div>
+                        <div style="display:flex; justify-content:space-between;"><span>🍕 Person 2</span><strong>$${data.finalOwed[2].toFixed(2)}</strong></div>
+                    </div>
+                    <div class="payment-option" id="venmoOption"><div style="font-size:16px; font-weight:600;">💸 Request on Venmo</div><div style="font-size:13px; color:#666; margin-top:6px;">Pre-filled amounts for each person.</div></div>
+                    <div class="payment-option" id="zelleOption"><div style="font-size:16px; font-weight:600;">💳 Request on Zelle</div><div style="font-size:13px; color:#666; margin-top:6px;">Direct bank transfer.</div></div>
+                    <div class="payment-option" id="cashOption"><div style="font-size:16px; font-weight:600;">💰 Cash / split at table</div><div style="font-size:13px; color:#666; margin-top:6px;">Show each person their share.</div></div>
+                </div>
+                <div>
+                    <button class="exit-btn" id="exitAppBtn">Done — Exit App</button>
+                    <div class="startover-link"><a id="startOverLink">Start over → clear all data</a></div>
+                    <div class="toast-msg"></div>
+                </div>
+            `;
+        }
+
+        function renderScreen() {
+            const screenContent = document.getElementById('screenContent');
+            if (!screenContent) return;
+            switch (currentScreen) {
+                case 'home': screenContent.innerHTML = renderHomeScreen(); break;
+                case 'scan': screenContent.innerHTML = renderScanScreen(); break;
+                case 'selection': screenContent.innerHTML = renderSelectionScreen(); break;
+                case 'summary': screenContent.innerHTML = renderSummaryScreen(); break;
+                case 'payment': screenContent.innerHTML = renderPaymentScreen(); break;
+            }
+            attachScreenHandlers();
+        }
+
+        function attachScreenHandlers() {
+            const homeStartBtn = document.getElementById('homeStartBtn');
+            if (homeStartBtn) homeStartBtn.addEventListener('click', () => { currentScreen = 'scan'; renderScreen(); });
+
+            const backFromScan = document.getElementById('backFromScan');
+            if (backFromScan) backFromScan.addEventListener('click', () => { currentScreen = 'home'; renderScreen(); });
+
+            const captureBtn = document.getElementById('captureBtn');
+            const manualEntryBtn = document.getElementById('manualEntryBtn');
+            if (captureBtn) captureBtn.addEventListener('click', () => { populateDefaultItems(); currentScreen = 'selection'; renderScreen(); });
+            if (manualEntryBtn) manualEntryBtn.addEventListener('click', () => { populateDefaultItems(); currentScreen = 'selection'; renderScreen(); });
+
+            const backFromSelection = document.getElementById('backFromSelection');
+            if (backFromSelection) backFromSelection.addEventListener('click', () => { currentScreen = 'scan'; renderScreen(); });
+
+            const resetItemsIcon = document.getElementById('resetItemsIcon');
+            if (resetItemsIcon) resetItemsIcon.addEventListener('click', () => { resetAllAssignments(); currentScreen = 'selection'; renderScreen(); });
+
+            const personIndicator = document.getElementById('personIndicator');
+            if (personIndicator) personIndicator.addEventListener('click', () => { switchActivePerson(); renderScreen(); });
+
+            document.querySelectorAll('.item').forEach(el => {
+                el.addEventListener('click', () => {
+                    const idx = Number(el.dataset.item);
+                    if (currentAssignment[idx] === activePerson) currentAssignment[idx] = null;
+                    else currentAssignment[idx] = activePerson;
+                    renderScreen();
+                });
+            });
+
+            const continueToSummaryBtn = document.getElementById('continueToSummaryBtn');
+            if (continueToSummaryBtn) continueToSummaryBtn.addEventListener('click', () => { currentScreen = 'summary'; renderScreen(); });
+
+            const backFromSummaryBtn = document.getElementById('backFromSummaryBtn');
+            if (backFromSummaryBtn) backFromSummaryBtn.addEventListener('click', () => { currentScreen = 'selection'; renderScreen(); });
+
+            const summaryContinueBtn = document.getElementById('summaryContinueBtn');
+            if (summaryContinueBtn) summaryContinueBtn.addEventListener('click', () => { currentScreen = 'payment'; renderScreen(); });
+
+            const backFromPayment = document.getElementById('backFromPayment');
+            if (backFromPayment) backFromPayment.addEventListener('click', () => { currentScreen = 'summary'; renderScreen(); });
+
+            const venmoOption = document.getElementById('venmoOption');
+            if (venmoOption) venmoOption.addEventListener('click', () => showToast('📱 Venmo request sent! (demo)'));
+            const zelleOption = document.getElementById('zelleOption');
+            if (zelleOption) zelleOption.addEventListener('click', () => showToast('🏦 Zelle request ready! (demo)'));
+            const cashOption = document.getElementById('cashOption');
+            if (cashOption) cashOption.addEventListener('click', () => showToast('💵 Show breakdown at table.'));
+            const exitAppBtn = document.getElementById('exitAppBtn');
+            if (exitAppBtn) exitAppBtn.addEventListener('click', () => showToast('👋 Thanks for using Split/R!'));
+            const startOverLink = document.getElementById('startOverLink');
+            if (startOverLink) startOverLink.addEventListener('click', () => { resetAllAssignments(); currentScreen = 'home'; renderScreen(); showToast('✨ All data cleared. Start fresh!'); });
+        }
+
+        function switchActivePerson() {
+            activePerson = activePerson === 1 ? 2 : 1;
+        }
+
+        function resetAllAssignments() {
+            currentAssignment = [null, null, null, null];
+            activePerson = 1;
+        }
+
+        function populateDefaultItems() {
+            currentAssignment = [1, 2, 1, 2];
+            activePerson = 1;
+        }
+
+        renderScreen();
+    </script>
+</body>
+</html>

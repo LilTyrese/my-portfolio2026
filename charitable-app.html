@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Charitable — Interactive Mobile Prototype</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e0e5ec 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .phone {
+            width: 380px;
+            height: 780px;
+            background: #1a1a1a;
+            border-radius: 44px;
+            padding: 18px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .phone::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 130px;
+            height: 28px;
+            background: #1a1a1a;
+            border-radius: 0 0 22px 22px;
+            z-index: 12;
+        }
+
+        .screen-wrapper {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 32px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .screen-content {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        :root {
+            --primary: #2D5F3F;
+            --primary-light: #4A8B5E;
+            --accent: #E8A44C;
+            --bg: #FAF8F5;
+            --surface: #FFFFFF;
+            --text: #1A1A1A;
+            --text-light: #6B6B6B;
+            --border: #E5E5E5;
+            --radius: 16px;
+        }
+
+        /* Onboarding Screen */
+        .onboarding {
+            padding: 60px 32px 40px;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(165deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            height: 100%;
+        }
+
+        .logo {
+            width: 64px;
+            height: 64px;
+            background: white;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-family: 'Fraunces', serif;
+            font-size: 48px;
+            font-weight: 600;
+            line-height: 1.1;
+            margin-bottom: 16px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 48px;
+            line-height: 1.5;
+        }
+
+        .value-props {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .value-prop {
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.18);
+            padding: 20px;
+            border-radius: 16px;
+        }
+
+        .value-prop-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .value-prop h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .value-prop p {
+            font-size: 14px;
+            opacity: 0.85;
+            line-height: 1.4;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--text);
+            border: none;
+            padding: 18px 32px;
+            border-radius: 14px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(232,164,76,0.3);
+            width: 100%;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.97);
+        }
+
+        /* Categories Screen */
+        .header {
+            padding: 60px 24px 24px;
+            background: var(--surface);
+            flex-shrink: 0;
+        }
+
+        .header h2 {
+            font-family: 'Fraunces', serif;
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: var(--text-light);
+            font-size: 16px;
+        }
+
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 24px 24px;
+            background: white;
+        }
+
+        /* Categories Grid */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .category-card {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 24px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .category-card.featured {
+            background: rgba(232,164,76,0.08);
+            border-color: var(--accent);
+            box-shadow: 0 14px 30px rgba(232,164,76,0.18);
+            transform: translateY(-1px);
+        }
+
+        .category-card.featured .category-icon {
+            transform: scale(1.1);
+        }
+
+        .category-card:hover,
+        .category-card:focus-visible {
+            border-color: var(--accent);
+            box-shadow: 0 10px 24px rgba(232,164,76,0.18);
+            transform: translateY(-2px);
+            outline: none;
+        }
+
+        .category-card:active {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .category-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+
+        .category-card h3 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .category-card p {
+            font-size: 12px;
+            color: var(--text-light);
+            line-height: 1.3;
+        }
+
+        /* Charity Hero */
+        .charity-hero {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+            padding: 60px 24px 40px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .charity-hero::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-bottom: 24px;
+            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 20px;
+        }
+
+        .back-btn:active {
+            transform: scale(0.95);
+        }
+
+        .charity-logo {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+            font-size: 48px;
+        }
+
+        .charity-hero h2 {
+            font-family: 'Fraunces', serif;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .charity-hero .subtitle {
+            font-size: 15px;
+            opacity: 0.9;
+            margin-bottom: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .charity-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding: 24px;
+            background: var(--bg);
+        }
+
+        .stat {
+            background: var(--surface);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .info-section {
+            padding: 24px;
+        }
+
+        .info-section h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .info-section p {
+            color: var(--text-light);
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .impact-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(45,95,63,0.1);
+            color: var(--primary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 16px;
+        }
+
+        /* Donation Form */
+        .donation-form {
+            padding: 24px;
+        }
+
+        .amount-selector {
+            margin-bottom: 24px;
+        }
+
+        .amount-selector label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+
+        .amount-options {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .amount-btn {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            padding: 16px 8px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .amount-btn:active {
+            border-color: var(--primary);
+        }
+
+        .amount-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .custom-amount {
+            position: relative;
+            margin-top: 12px;
+        }
+
+        .custom-amount input {
+            width: 100%;
+            padding: 16px 16px 16px 36px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .custom-amount input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .dollar-sign {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .impact-preview {
+            background: linear-gradient(135deg, rgba(45,95,63,0.08) 0%, rgba(74,139,94,0.08) 100%);
+            border: 1px solid rgba(45,95,63,0.15);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+        }
+
+        .impact-preview h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .impact-preview p {
+            font-size: 14px;
+            color: var(--text-light);
+            line-height: 1.5;
+        }
+
+        .payment-section {
+            margin-bottom: 24px;
+        }
+
+        .payment-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .fee-info {
+            font-size: 12px;
+            color: var(--text-light);
+            padding: 12px;
+            background: var(--bg);
+            border-radius: 8px;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        /* Success Screen */
+        .success-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
+            background: linear-gradient(165deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            height: 100%;
+        }
+
+        .success-icon {
+            width: 120px;
+            height: 120px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            margin-bottom: 32px;
+            backdrop-filter: blur(10px);
+        }
+
+        .success-screen h2 {
+            font-family: 'Fraunces', serif;
+            font-size: 36px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .success-screen p {
+            font-size: 17px;
+            opacity: 0.9;
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+
+        .donation-summary {
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.18);
+            padding: 24px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            width: 100%;
+        }
+
+        .donation-summary h3 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            flex-direction: column;
+            overflow-y: auto;
+            z-index: 0;
+        }
+
+        .screen.active {
+            display: flex;
+            z-index: 1;
+        }
+
+        .nav-buttons {
+            padding: 16px 24px;
+            display: flex;
+            gap: 12px;
+            justify-content: space-between;
+            background: white;
+            border-top: 1px solid var(--border);
+        }
+
+        .nav-btn {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            color: var(--text-light);
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex: 1;
+            text-align: center;
+        }
+
+        .nav-btn:active {
+            transform: scale(0.97);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .nav-btn.next {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .screen-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+
+        .screen-subtitle {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="screen-wrapper">
+            <div class="screen-content">
+                <!-- Screen 1: Onboarding -->
+                <div class="screen active">
+                    <div class="onboarding">
+                        <div class="logo">🤲</div>
+                        <h1>Charitable</h1>
+                        <p class="subtitle">Give with complete transparency</p>
+                        
+                        <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 16px;">
+                            <div style="background: rgba(255,255,255,0.1); padding: 16px; border-radius: 12px; backdrop-filter: blur(10px);">
+                                <div style="font-size: 20px; margin-bottom: 6px;">✓</div>
+                                <div style="font-size: 14px; font-weight: 600;">Verified Charities</div>
+                                <div style="font-size: 12px; opacity: 0.8; margin-top: 4px;">Every organization vetted</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.1); padding: 16px; border-radius: 12px; backdrop-filter: blur(10px);">
+                                <div style="font-size: 20px; margin-bottom: 6px;">📊</div>
+                                <div style="font-size: 14px; font-weight: 600;">Track Impact</div>
+                                <div style="font-size: 12px; opacity: 0.8; margin-top: 4px;">See your real impact</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.1); padding: 16px; border-radius: 12px; backdrop-filter: blur(10px);">
+                                <div style="font-size: 20px; margin-bottom: 6px;">💳</div>
+                                <div style="font-size: 14px; font-weight: 600;">100% To Charity</div>
+                                <div style="font-size: 12px; opacity: 0.8; margin-top: 4px;">We cover all fees</div>
+                            </div>
+                        </div>
+
+                        <button class="btn-primary" onclick="nextScreen()">Get Started →</button>
+                    </div>
+                </div>
+
+                <!-- Screen 2: Categories -->
+                <div class="screen">
+                    <div class="header">
+                        <h2>Choose a cause</h2>
+                        <p>Find charities aligned with what matters to you</p>
+                    </div>
+                    <div class="content">
+                        <div class="categories-grid">
+                            <div class="category-card featured" onclick="nextScreen()">
+                                <div class="category-icon">🍽️</div>
+                                <h3>Food & Hunger</h3>
+                                <p>Combat food insecurity</p>
+                            </div>
+                            <div class="category-card">
+                                <div class="category-icon">🏠</div>
+                                <h3>Housing</h3>
+                                <p>Shelter for those in need</p>
+                            </div>
+                            <div class="category-card">
+                                <div class="category-icon">📚</div>
+                                <h3>Education</h3>
+                                <p>Support learning access</p>
+                            </div>
+                            <div class="category-card">
+                                <div class="category-icon">🏥</div>
+                                <h3>Healthcare</h3>
+                                <p>Medical care for all</p>
+                            </div>
+                            <div class="category-card">
+                                <div class="category-icon">🌍</div>
+                                <h3>Environment</h3>
+                                <p>Protect our planet</p>
+                            </div>
+                            <div class="category-card">
+                                <div class="category-icon">🐾</div>
+                                <h3>Animal Welfare</h3>
+                                <p>Care for animals</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Screen 3: Charity Detail -->
+                <div class="screen">
+                    <div class="charity-hero">
+                        <button class="back-btn" onclick="prevScreen()">←</button>
+                        <div class="charity-logo">🍽️</div>
+                        <h2>Food Bank For NYC</h2>
+                        <p class="subtitle">Working to end food poverty through distribution and support</p>
+                    </div>
+                    
+                    <div class="content">
+                        <div class="charity-stats">
+                            <div class="stat">
+                                <div class="stat-value">1.5M</div>
+                                <div class="stat-label">People helped</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">98%</div>
+                                <div class="stat-label">To programs</div>
+                            </div>
+                        </div>
+
+                        <div class="info-section">
+                            <h3>About this charity</h3>
+                            <p>For nearly 40 years, Food Bank For New York City has worked to end food poverty by organizing food, information, and support for community survival, empowerment, and dignity.</p>
+                            <div class="impact-badge">
+                                ✓ Verified High-Impact Organization
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Screen 4: Donation Form -->
+                <div class="screen">
+                    <div class="header">
+                        <h2>Make a donation</h2>
+                        <p>Food Bank For NYC</p>
+                    </div>
+                    
+                    <div class="content">
+                        <div class="donation-form">
+                            <div class="amount-selector">
+                                <label>Select amount</label>
+                                <div class="amount-options">
+                                    <button class="amount-btn" onclick="setAmount(this, 10)">$10</button>
+                                    <button class="amount-btn active" onclick="setAmount(this, 25)">$25</button>
+                                    <button class="amount-btn" onclick="setAmount(this, 50)">$50</button>
+                                    <button class="amount-btn" onclick="setAmount(this, 100)">$100</button>
+                                </div>
+                            </div>
+
+                            <div class="impact-preview">
+                                <h4>Your impact: $25 provides 75 meals</h4>
+                                <p>Your donation helps provide nutritious food to families facing food insecurity.</p>
+                            </div>
+
+                            <div class="payment-section">
+                                <h3>Payment information</h3>
+                                <div class="input-group">
+                                    <label>Name on card</label>
+                                    <input type="text" placeholder="Jane Doe" />
+                                </div>
+                                <div class="input-group">
+                                    <label>Card number</label>
+                                    <input type="text" placeholder="1234 5678 9012 3456" />
+                                </div>
+                                <div class="input-row">
+                                    <div class="input-group">
+                                        <label>Expiry date</label>
+                                        <input type="text" placeholder="MM/YY" />
+                                    </div>
+                                    <div class="input-group">
+                                        <label>CVV</label>
+                                        <input type="text" placeholder="123" />
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label>Email address</label>
+                                    <input type="email" placeholder="jane@example.com" />
+                                </div>
+                            </div>
+
+                            <div class="fee-info">
+                                💳 <strong>100% goes to the charity.</strong> We cover all processing fees so your full donation makes an impact.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Screen 5: Success -->
+                <div class="screen">
+                    <div class="success-screen">
+                        <div class="success-icon">🎉</div>
+                        <h2>Thank you!</h2>
+                        <p>Your generosity is making a real difference in people's lives</p>
+
+                        <div class="donation-summary">
+                            <h3>Donation Summary</h3>
+                            <div class="summary-row">
+                                <span>Donation amount</span>
+                                <span id="summaryAmount">$25.00</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Processing fee</span>
+                                <span>$0.00</span>
+                            </div>
+                            <div class="summary-row" style="font-weight: 600; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 8px; margin-top: 8px;">
+                                <span>Total charged</span>
+                                <span id="summaryTotal">$25.00</span>
+                            </div>
+                        </div>
+
+                        <button class="btn-primary" style="width: 100%; background: var(--accent); color: var(--text); border: none;" onclick="restartFlow()">Start Over</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="nav-btn" id="prevBtn" onclick="prevScreen()">← Back</button>
+                <button class="nav-btn next" id="nextBtn" onclick="nextScreen()">Next →</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentScreen = 0;
+        let donationAmount = 25;
+        const screens = document.querySelectorAll('.screen');
+        const totalScreens = screens.length;
+
+        function showScreen(n) {
+            screens.forEach((screen, index) => {
+                screen.classList.remove('active');
+                if (index === n) {
+                    screen.classList.add('active');
+                }
+            });
+
+            document.getElementById('prevBtn').disabled = n === 0;
+            document.getElementById('nextBtn').disabled = n === totalScreens - 1;
+
+            if (n === totalScreens - 1) {
+                document.getElementById('nextBtn').textContent = 'Done';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Next →';
+            }
+
+            updateDonationSummary();
+        }
+
+        function nextScreen() {
+            if (currentScreen < totalScreens - 1) {
+                currentScreen++;
+                showScreen(currentScreen);
+            } else {
+                restartFlow();
+            }
+        }
+
+        function prevScreen() {
+            if (currentScreen > 0) {
+                currentScreen--;
+                showScreen(currentScreen);
+            }
+        }
+
+        function restartFlow() {
+            currentScreen = 0;
+            donationAmount = 25;
+            const defaultBtn = document.querySelector('.amount-btn.active');
+            if (defaultBtn) {
+                defaultBtn.click();
+            }
+            showScreen(currentScreen);
+        }
+
+        function setAmount(btn, amount) {
+            document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            donationAmount = amount;
+            updateDonationSummary();
+        }
+
+        function updateDonationSummary() {
+            const summaryAmount = document.getElementById('summaryAmount');
+            const summaryTotal = document.getElementById('summaryTotal');
+            const impactText = document.getElementById('impactText');
+            if (summaryAmount) {
+                summaryAmount.textContent = `$${donationAmount.toFixed(2)}`;
+            }
+            if (summaryTotal) {
+                summaryTotal.textContent = `$${donationAmount.toFixed(2)}`;
+            }
+            if (impactText) {
+                impactText.textContent = `Your impact: $${donationAmount} provides ${Math.round(donationAmount * 3)} meals`;
+            }
+        }
+
+        showScreen(0);
+        updateDonationSummary();
+    </script>
+</body>
+</html>

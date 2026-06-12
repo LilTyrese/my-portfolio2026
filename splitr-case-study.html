@@ -88,6 +88,22 @@
         .image-container span.icon { font-size: 28px; }
         .image-container span.label { font-weight: 600; color: var(--text-muted); }
 
+        .iframe-wrapper {
+            display: flex;
+            justify-content: center;
+            padding: 36px 0 48px;
+        }
+        .iframe-wrapper iframe {
+            width: 100%;
+            max-width: 540px;
+            height: 900px;
+            min-height: 760px;
+            border: none;
+            border-radius: 44px;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.12);
+            background: transparent;
+        }
+
         .insight-box {
             background: var(--accent-bg); border-left: 4px solid var(--accent);
             padding: 24px; border-radius: 0 var(--radius-md) var(--radius-md) 0; margin: 32px 0;
@@ -272,11 +288,14 @@
             <li><strong>Typography:</strong> Bold geometric shapes for headers give the layout personality, while clean, readable body text handles numbers easily.</li>
         </ul>
 
-        <div class="image-container" style="background: #FFF5F8; padding: 60px 24px;">
-            <span class="icon">📱</span>
-            <span class="label">[ Image: High-Fidelity UI Presentation Mockups ]</span>
-            <p style="font-size:12px; max-width:400px; margin:0; color: var(--text-muted);">Embed your polished, high-fidelity PNG mockups showing the final design layouts here.</p>
+        <div class="iframe-wrapper">
+            <iframe 
+                src="prototype2-app.html" 
+                frameborder="0"
+                title="Split/R interactive prototype">
+            </iframe>
         </div>
+
     </section>
 
     <div class="project-nav-container">

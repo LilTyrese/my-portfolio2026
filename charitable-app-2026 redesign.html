@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GiveWell - Charitable Giving Reimagined</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2D5F3F;
+            --primary-light: #4A8B5E;
+            --accent: #E8A44C;
+            --bg: #FAF8F5;
+            --surface: #FFFFFF;
+            --text: #1A1A1A;
+            --text-light: #6B6B6B;
+            --border: #E5E5E5;
+            --success: #2D5F3F;
+            --radius: 16px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .screen-container {
+            display: flex;
+            gap: 24px;
+            padding: 40px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+        }
+
+        .screen {
+            min-width: 390px;
+            height: 844px;
+            background: var(--surface);
+            border-radius: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04);
+            overflow: hidden;
+            scroll-snap-align: start;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Onboarding Screens */
+        .onboarding {
+            padding: 60px 32px 40px;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(165deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+        }
+
+        .logo {
+            width: 64px;
+            height: 64px;
+            background: white;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-family: 'Fraunces', serif;
+            font-size: 48px;
+            font-weight: 600;
+            line-height: 1.1;
+            margin-bottom: 16px;
+            font-optical-sizing: auto;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 48px;
+            line-height: 1.5;
+        }
+
+        .value-props {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .value-prop {
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.18);
+            padding: 20px;
+            border-radius: 16px;
+            animation: slideUp 0.6s ease-out backwards;
+        }
+
+        .value-prop:nth-child(2) { animation-delay: 0.1s; }
+        .value-prop:nth-child(3) { animation-delay: 0.2s; }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+        }
+
+        .value-prop-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .value-prop h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .value-prop p {
+            font-size: 14px;
+            opacity: 0.85;
+            line-height: 1.4;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--text);
+            border: none;
+            padding: 18px 32px;
+            border-radius: 14px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(232,164,76,0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(232,164,76,0.4);
+        }
+
+        /* Categories Screen */
+        .header {
+            padding: 60px 24px 24px;
+            background: var(--surface);
+        }
+
+        .header h2 {
+            font-family: 'Fraunces', serif;
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: var(--text-light);
+            font-size: 16px;
+        }
+
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 24px 24px;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .category-card {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 24px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .category-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        }
+
+        .category-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .category-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+
+        .category-card h3 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .category-card p {
+            font-size: 12px;
+            color: var(--text-light);
+            line-height: 1.3;
+        }
+
+        /* Charity Detail */
+        .charity-hero {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+            padding: 60px 24px 40px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .charity-hero::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-bottom: 24px;
+            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 20px;
+        }
+
+        .charity-logo {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .charity-logo img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+        }
+
+        .charity-hero h2 {
+            font-family: 'Fraunces', serif;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .charity-hero .subtitle {
+            font-size: 15px;
+            opacity: 0.9;
+            margin-bottom: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .charity-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding: 24px;
+            background: var(--bg);
+        }
+
+        .stat {
+            background: var(--surface);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .info-section {
+            padding: 24px;
+        }
+
+        .info-section h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .info-section p {
+            color: var(--text-light);
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .impact-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(45,95,63,0.1);
+            color: var(--primary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 16px;
+        }
+
+        /* Donation Form */
+        .donation-form {
+            padding: 24px;
+        }
+
+        .amount-selector {
+            margin-bottom: 24px;
+        }
+
+        .amount-selector label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+
+        .amount-options {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .amount-btn {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            padding: 16px 8px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .amount-btn:hover {
+            border-color: var(--primary);
+        }
+
+        .amount-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .custom-amount {
+            position: relative;
+            margin-top: 12px;
+        }
+
+        .custom-amount input {
+            width: 100%;
+            padding: 16px 16px 16px 36px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .custom-amount input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .dollar-sign {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .impact-preview {
+            background: linear-gradient(135deg, rgba(45,95,63,0.08) 0%, rgba(74,139,94,0.08) 100%);
+            border: 1px solid rgba(45,95,63,0.15);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+        }
+
+        .impact-preview h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .impact-preview p {
+            font-size: 14px;
+            color: var(--text-light);
+            line-height: 1.5;
+        }
+
+        .payment-section {
+            margin-bottom: 24px;
+        }
+
+        .payment-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg);
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--primary);
+        }
+
+        .checkbox-group label {
+            font-size: 14px;
+            color: var(--text);
+            flex: 1;
+        }
+
+        .fee-info {
+            font-size: 12px;
+            color: var(--text-light);
+            padding: 12px;
+            background: var(--bg);
+            border-radius: 8px;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        /* Success Screen */
+        .success-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
+            background: linear-gradient(165deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+        }
+
+        .success-icon {
+            width: 120px;
+            height: 120px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            margin-bottom: 32px;
+            animation: scaleIn 0.6s ease-out;
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .success-screen h2 {
+            font-family: 'Fraunces', serif;
+            font-size: 36px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .success-screen p {
+            font-size: 17px;
+            opacity: 0.9;
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+
+        .donation-summary {
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.18);
+            padding: 24px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            width: 100%;
+        }
+
+        .donation-summary h3 {
+            font-size: 15px;
+            font-weight: 500;
+            opacity: 0.8;
+            margin-bottom: 12px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+
+        .summary-row:last-child {
+            margin-bottom: 0;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
+        /* Loading Animation */
+        .loading-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            background: var(--surface);
+        }
+
+        .spinner {
+            width: 80px;
+            height: 80px;
+            border: 4px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 32px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--text-light);
+        }
+
+        /* Scrollbar */
+        .content::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .content::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 2px;
+        }
+
+        /* Navigation dots */
+        .nav-dots {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            background: rgba(255,255,255,0.9);
+            padding: 12px 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .dot.active {
+            background: var(--primary);
+            width: 24px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="screen-container">
+        <!-- Screen 1: Onboarding -->
+        <div class="screen">
+            <div class="onboarding">
+                <div class="logo">🤲</div>
+                <h1>Give with confidence</h1>
+                <p class="subtitle">Support verified charities making real impact, with complete transparency</p>
+                
+                <div class="value-props">
+                    <div class="value-prop">
+                        <div class="value-prop-icon">✓</div>
+                        <h3>100% Verified Charities</h3>
+                        <p>Every organization is vetted for legitimacy and impact effectiveness</p>
+                    </div>
+                    <div class="value-prop">
+                        <div class="value-prop-icon">📊</div>
+                        <h3>Track Your Impact</h3>
+                        <p>See exactly how your donations make a difference with real-time updates</p>
+                    </div>
+                    <div class="value-prop">
+                        <div class="value-prop-icon">💳</div>
+                        <h3>Tax Receipts Automatically</h3>
+                        <p>Get instant tax-deductible receipts for all your contributions</p>
+                    </div>
+                </div>
+
+                <button class="btn-primary">Get Started</button>
+            </div>
+        </div>
+
+        <!-- Screen 2: Categories -->
+        <div class="screen">
+            <div class="header">
+                <h2>Choose a cause</h2>
+                <p>Find charities aligned with what matters to you</p>
+            </div>
+            <div class="content">
+                <div class="categories-grid">
+                    <div class="category-card">
+                        <div class="category-icon">🍽️</div>
+                        <h3>Food & Hunger</h3>
+                        <p>Combat food insecurity</p>
+                    </div>
+                    <div class="category-card">
+                        <div class="category-icon">🏠</div>
+                        <h3>Housing</h3>
+                        <p>Shelter for those in need</p>
+                    </div>
+                    <div class="category-card">
+                        <div class="category-icon">📚</div>
+                        <h3>Education</h3>
+                        <p>Support learning access</p>
+                    </div>
+                    <div class="category-card">
+                        <div class="category-icon">🏥</div>
+                        <h3>Healthcare</h3>
+                        <p>Medical care for all</p>
+                    </div>
+                    <div class="category-card">
+                        <div class="category-icon">🌍</div>
+                        <h3>Environment</h3>
+                        <p>Protect our planet</p>
+                    </div>
+                    <div class="category-card">
+                        <div class="category-icon">🐾</div>
+                        <h3>Animal Welfare</h3>
+                        <p>Care for animals</p>
+                    </div>
+                    <div class="category-card">
+                        <div class="category-icon">⚖️</div>
+                        <h3>Human Rights</h3>
+                        <p>Justice and equality</p>
+                    </div>
+                    <div class="category-card">
+                        <div class="category-icon">🔍</div>
+                        <h3>Explore All</h3>
+                        <p>Browse all causes</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 3: Charity Detail -->
+        <div class="screen">
+            <div class="charity-hero">
+                <button class="back-btn">←</button>
+                <div class="charity-logo">
+                    <span style="font-size: 48px;">🍽️</span>
+                </div>
+                <h2>Food Bank For New York City</h2>
+                <p class="subtitle">Working to end food poverty in NYC through food distribution, income support, and policy change</p>
+            </div>
+            
+            <div class="content">
+                <div class="charity-stats">
+                    <div class="stat">
+                        <div class="stat-value">1.5M</div>
+                        <div class="stat-label">People helped</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">98%</div>
+                        <div class="stat-label">To programs</div>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h3>About this charity</h3>
+                    <p>For nearly 40 years, Food Bank For New York City has worked to end food poverty by organizing food, information, and support for community survival, empowerment, and dignity. The Food Bank works throughout the five boroughs providing food to over 1.5 million New Yorkers through a network of more than 1,000 community partners.</p>
+                    <div class="impact-badge">
+                        ✓ Verified High-Impact Organization
+                    </div>
+                </div>
+
+                <div style="padding: 0 24px 100px;">
+                    <button class="btn-primary" style="width: 100%;">Donate Now</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 4: Donation Form -->
+        <div class="screen">
+            <div class="header">
+                <h2>Make a donation</h2>
+                <p>Food Bank For New York City</p>
+            </div>
+            
+            <div class="content">
+                <div class="donation-form">
+                    <div class="amount-selector">
+                        <label>Select amount</label>
+                        <div class="amount-options">
+                            <button class="amount-btn">$10</button>
+                            <button class="amount-btn active">$25</button>
+                            <button class="amount-btn">$50</button>
+                            <button class="amount-btn">$100</button>
+                        </div>
+                        <div class="custom-amount">
+                            <span class="dollar-sign">$</span>
+                            <input type="number" placeholder="Custom amount" />
+                        </div>
+                    </div>
+
+                    <div class="impact-preview">
+                        <h4>Your impact: $25 provides 75 meals</h4>
+                        <p>Your donation helps provide nutritious food to families facing food insecurity across all five boroughs of New York City.</p>
+                    </div>
+
+                    <div class="payment-section">
+                        <h3>Payment details</h3>
+                        <div class="input-group">
+                            <label>Name on card</label>
+                            <input type="text" placeholder="John Doe" />
+                        </div>
+                        <div class="input-group">
+                            <label>Card number</label>
+                            <input type="text" placeholder="1234 5678 9012 3456" />
+                        </div>
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label>Expiry date</label>
+                                <input type="text" placeholder="MM/YY" />
+                            </div>
+                            <div class="input-group">
+                                <label>CVV</label>
+                                <input type="text" placeholder="123" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="anonymous" />
+                        <label for="anonymous">Make this donation anonymous</label>
+                    </div>
+
+                    <div class="fee-info">
+                        💳 <strong>100% goes to the charity.</strong> We cover all processing fees so your full donation makes an impact. Optional: Add $2.50 to help us keep this service free for all charities.
+                    </div>
+
+                    <button class="btn-primary" style="width: 100%;">Complete Donation</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 5: Loading -->
+        <div class="screen">
+            <div class="loading-screen">
+                <div class="spinner"></div>
+                <p class="loading-text">Processing your donation...</p>
+            </div>
+        </div>
+
+        <!-- Screen 6: Success -->
+        <div class="screen">
+            <div class="success-screen">
+                <div class="success-icon">🎉</div>
+                <h2>Thank you!</h2>
+                <p>Your generosity is making a real difference in people's lives</p>
+
+                <div class="donation-summary">
+                    <h3>Donation Summary</h3>
+                    <div class="summary-row">
+                        <span>Donation amount</span>
+                        <span>$25.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Processing fee</span>
+                        <span>$0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Total charged</span>
+                        <span>$25.00</span>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn-primary" style="width: 100%;">View Tax Receipt</button>
+                    <button class="btn-secondary">Set Up Monthly Giving</button>
+                    <button class="btn-secondary">Share Your Impact</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-dots">
+        <div class="dot active"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+    </div>
+
+    <script>
+        // Add smooth scrolling and active dot tracking
+        const container = document.querySelector('.screen-container');
+        const dots = document.querySelectorAll('.dot');
+        
+        container.addEventListener('scroll', () => {
+            const scrollLeft = container.scrollLeft;
+            const screenWidth = 390 + 24; // screen width + gap
+            const activeIndex = Math.round(scrollLeft / screenWidth);
+            
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === activeIndex);
+            });
+        });
+
+        // Add click handlers for interactive elements
+        document.querySelectorAll('.amount-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

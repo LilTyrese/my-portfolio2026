@@ -79,6 +79,22 @@
         .persona-card .tag { font-size: 11px; font-weight: 600; color: var(--accent); text-transform: uppercase; margin-bottom: 12px; display: inline-block; }
         .persona-quote { font-style: italic; font-size: 13.5px; color: var(--text-muted); border-left: 2px solid var(--accent); padding-left: 12px; margin-top: 12px; }
 
+        .iframe-wrapper {
+            display: flex;
+            justify-content: center;
+            padding: 36px 0 48px;
+        }
+        .iframe-wrapper iframe {
+            width: 100%;
+            max-width: 540px;
+            height: 900px;
+            min-height: 760px;
+            border: none;
+            border-radius: 44px;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.12);
+            background: transparent;
+        }
+
         .image-container {
             background: #EFF3EF; border: 1px dashed #C2CDC4;
             border-radius: var(--radius-md); padding: 50px 24px; text-align: center;
@@ -149,7 +165,7 @@
         </div>
         <div class="stat-item">
             <h3>Flow Speed</h3>
-            <p>3 Taps</p>
+            <p>5 Taps</p>
             <span>To complete a donation</span>
         </div>
         <div class="stat-item">
@@ -259,12 +275,14 @@
 
     <section>
         <h2>Visual Architecture</h2>
-        <p>The layout uses warm, stable forest green tones (`#2B5E2F`) to establish structural security, combined with crisp cream backgrounds to reduce financial anxiety.</p>
+        <p>The layout uses warm, stable forest green tones (`#2B5E2F`) to establish structural security, combined with crisp cream backgrounds to reduce financial anxiety. Below is the interactive donation flow:</p>
 
-        <div class="image-container" style="background: #EAF2EB; padding: 60px 24px;">
-            <span class="icon">📱</span>
-            <span class="label">[ Image: Full Polished High-Fidelity UI Screens ]</span>
-            <p style="font-size:12px; max-width:400px; margin:0; color: var(--text-muted);">Embed your finished, high-fidelity user screen layouts from Figma right here.</p>
+        <div class="iframe-wrapper">
+            <iframe 
+                src="charitable-app.html" 
+                frameborder="0"
+                title="Charitable interactive prototype">
+            </iframe>
         </div>
     </section>
 

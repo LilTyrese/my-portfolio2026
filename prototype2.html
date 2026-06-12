@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Split/R – Full App Flow (Refined Buttons)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Sans:wght@500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e0e5ec 100%);
+            min-height: 100vh;
+            padding: 40px 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* all screens container */
+        .all-screens {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 32px;
+            max-width: 1700px;
+            margin: 0 auto;
+        }
+
+        .phone-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 340px;
+        }
+
+        .screen-label {
+            background: #1a1a1a;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            letter-spacing: 0.3px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .phone {
+            width: 340px;
+            height: 720px;
+            background: #1a1a1a;
+            border-radius: 44px;
+            padding: 18px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            position: relative;
+            transition: transform 0.2s ease;
+        }
+
+        .phone:hover {
+            transform: translateY(-6px);
+        }
+
+        .phone::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 130px;
+            height: 28px;
+            background: #1a1a1a;
+            border-radius: 0 0 22px 22px;
+            z-index: 12;
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 32px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            position: relative;
+            scrollbar-width: thin;
+        }
+
+        .screen::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        /* ----- V3 HOME STYLES (bold diagonal split) ----- */
+        .home-v3 {
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .diagonal-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 56%;
+            background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
+            transform: skewY(-5deg);
+            transform-origin: top left;
+        }
+
+        .content-v3 {
+            position: relative;
+            z-index: 2;
+            padding: 38px 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .logo-v3 {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 68px;
+            font-weight: 900;
+            color: white;
+            letter-spacing: -3px;
+            line-height: 0.9;
+            margin-bottom: 16px;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .tagline-v3 {
+            font-size: 18px;
+            color: white;
+            font-weight: 600;
+            margin-bottom: 32px;
+            line-height: 1.4;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 32px;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(4px);
+            border-radius: 20px;
+            padding: 20px 12px;
+            text-align: center;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-icon {
+            font-size: 34px;
+            margin-bottom: 10px;
+        }
+
+        .stat-text {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1a1a1a;
+            line-height: 1.3;
+        }
+
+        .start-btn-v3 {
+            width: 100%;
+            background: #1a1a1a;
+            color: white;
+            border: none;
+            padding: 20px;
+            border-radius: 20px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .start-btn-v3:active { transform: scale(0.97); }
+
+        /* Shared elements */
+        .back-arrow {
+            font-size: 28px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-block;
+            margin-bottom: 12px;
+            color: #1a1a1a;
+            width: fit-content;
+        }
+
+        button { cursor: pointer; font-family: 'Inter', sans-serif; }
+
+        /* Scan screen */
+        .scan-screen { background: #fafafa; padding: 20px; display: flex; flex-direction: column; }
+        .scan-title { font-family: 'DM Sans', sans-serif; font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+        .camera-box { background: #1a1a1a; border-radius: 28px; height: 380px; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 20px 0; position: relative; }
+        .scan-frame { position: absolute; width: 80%; height: 55%; border: 2px dashed rgba(233,30,99,0.7); border-radius: 24px; }
+        .camera-icon { font-size: 56px; margin-bottom: 12px; opacity: 0.7; }
+        .scan-btn { background: #e91e63; color: white; border: none; padding: 18px; border-radius: 16px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 12px rgba(233,30,99,0.3); }
+        .manual-btn { background: white; border: 2px solid #e0e0e0; padding: 16px; border-radius: 16px; font-weight: 600; }
+
+        /* selection screen */
+        .selection-screen { padding: 20px; background: #fafafa; }
+        .total-amount { font-family: 'DM Sans', sans-serif; font-size: 44px; font-weight: 800; }
+        .person-indicator { background: white; padding: 14px; border-radius: 20px; margin: 16px 0; display: flex; align-items: center; gap: 12px; font-weight: 500; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .item { background: white; border: 2px solid #eee; border-radius: 20px; padding: 16px; margin-bottom: 12px; transition: all 0.1s; }
+        .item.selected-p1 { background: #fff0f5; border-color: #e91e63; }
+        .item.selected-p2 { background: #e6f7ff; border-color: #40c4ff; }
+        .item-name { font-weight: 700; }
+        .item-price { font-weight: 800; }
+
+        /* summary screen */
+        .person-card { background: white; border-radius: 24px; padding: 18px; margin-bottom: 18px; border-left: 6px solid #e91e63; box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+        .person-card.p2 { border-left-color: #40c4ff; }
+        .person-total { font-size: 28px; font-weight: 800; color: #e91e63; }
+        .person-card.p2 .person-total { color: #40c4ff; }
+        .meal-item { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; }
+
+        /* ACTION ROW: back icon + continue button */
+        .action-row { display: flex; align-items: center; gap: 12px; margin-top: 16px; margin-bottom: 8px; }
+        .back-button-icon { background: #f0f0f0; width: 52px; height: 52px; border-radius: 28px; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 500; cursor: pointer; transition: all 0.2s ease; color: #1a1a1a; flex-shrink: 0; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .back-button-icon:active { transform: scale(0.96); background: #e4e4e4; }
+        .continue-primary { flex: 1; background: #e91e63; color: white; border: none; padding: 16px 20px; border-radius: 28px; font-size: 17px; font-weight: 700; cursor: pointer; box-shadow: 0 6px 14px rgba(233, 30, 99, 0.35); transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .continue-primary:active { transform: scale(0.97); }
+
+        /* payment screen */
+        .payment-option { background: white; border-radius: 20px; padding: 18px; margin-bottom: 12px; border: 1px solid #eee; cursor: pointer; transition: 0.1s; }
+        .exit-btn { background: #1a1a1a; color: white; border: none; padding: 18px; border-radius: 20px; font-weight: 700; font-size: 16px; width: 100%; margin-top: 8px; }
+        .startover-link { text-align: center; margin-top: 20px; margin-bottom: 8px; }
+        .startover-link a { color: #888; font-size: 14px; font-weight: 500; text-decoration: none; border-bottom: 1px dashed #ccc; cursor: pointer; }
+        
+        .demo-note { font-size: 11px; color: #aaa; text-align: center; margin-top: 8px; }
+        .toast-msg { font-size: 12px; color: #e91e63; font-weight: 500; text-align: center; margin-top: 12px; }
+    </style>
+</head>
+<body>
+<div class="all-screens">
+    
+    <!-- SCREEN 1: HOME (V3 Diagonal) -->
+    <div class="phone-column">
+        <div class="screen-label">🏠 HOME • V3 (Diagonal)</div>
+        <div class="phone">
+            <div class="screen home-v3">
+                <div class="diagonal-bg"></div>
+                <div class="content-v3">
+                    <div>
+                        <div class="logo-v3">Split/R</div>
+                        <div class="tagline-v3">The fastest way to split any bill</div>
+                    </div>
+                    <div>
+                        <div class="stats-grid">
+                            <div class="stat-box"><div class="stat-icon">⚡</div><div class="stat-text">Split in &lt;60 sec</div></div>
+                            <div class="stat-box"><div class="stat-icon">📷</div><div class="stat-text">Scan or manual</div></div>
+                            <div class="stat-box"><div class="stat-icon">🎯</div><div class="stat-text">Tax & tip included</div></div>
+                            <div class="stat-box"><div class="stat-icon">💳</div><div class="stat-text">Pay any way</div></div>
+                        </div>
+                        <button class="start-btn-v3" id="homeStartBtn">Let's Start →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCREEN 2: SCAN RECEIPT -->
+    <div class="phone-column">
+        <div class="screen-label">📸 1. SCAN RECEIPT</div>
+        <div class="phone">
+            <div class="screen scan-screen" id="scanScreen">
+                <div class="back-arrow" id="backFromScan">←</div>
+                <div class="scan-title">Scan Your Receipt</div>
+                <div class="scan-subtitle" style="color:#666; margin-bottom:6px;">Position receipt within frame</div>
+                <div class="camera-box">
+                    <div class="scan-frame"></div>
+                    <div class="camera-icon">📷</div>
+                    <div class="camera-text" style="color:white;">Tap to capture</div>
+                </div>
+                <div class="scan-actions" style="display: flex; flex-direction: column; gap: 12px;">
+                    <button class="scan-btn" id="captureBtn">Capture Receipt</button>
+                    <button class="manual-btn" id="manualEntryBtn">Enter Items Manually</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCREEN 3: SELECTION (reset icon + continue) -->
+    <div class="phone-column">
+        <div class="screen-label">👆 2. SELECT ITEMS</div>
+        <div class="phone">
+            <div class="screen selection-screen" id="selectionScreen">
+                <div class="back-arrow" id="backFromSelection">←</div>
+                <div style="background:white; border-radius:24px; padding:16px; margin-bottom:12px;">
+                    <div class="total-label" style="color:#666;">Total Amount:</div>
+                    <div class="total-amount">$86.45</div>
+                </div>
+                <div class="person-indicator" id="personIndicator">
+                    <span>👤 Assign to:</span>
+                    <span style="font-weight:800; background:#e91e63; color:white; padding:4px 12px; border-radius:40px;" id="activePersonLabel">Person 1</span>
+                    <span style="margin-left:auto; font-size:20px;" id="activePersonEmoji">☕</span>
+                </div>
+                <div class="items-container" id="itemsContainer"></div>
+                <!-- action row: reset icon + continue button -->
+                <div class="action-row" style="margin-top: 12px;">
+                    <div class="back-button-icon" id="resetItemsIcon">↻</div>
+                    <button class="continue-primary" id="continueToSummaryBtn">Continue →</button>
+                </div>
+                <div class="demo-note">↻ reset all assignments</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCREEN 4: SUMMARY (back arrow + continue button) -->
+    <div class="phone-column">
+        <div class="screen-label">🧾 3. SUMMARY</div>
+        <div class="phone">
+            <div class="screen summary-screen" style="background:#fafafa; padding:20px;" id="summaryScreen">
+                <div style="background:white; border-radius:24px; padding:16px; text-align:center; margin-bottom:20px;">
+                    <div style="color:#666;">Total Bill</div>
+                    <div class="total-amount" id="summaryTotalAmount">$86.45</div>
+                </div>
+                <div id="summaryPersonsList"></div>
+                <!-- action row: back arrow (undo/reset-like) + continue -->
+                <div class="action-row">
+                    <div class="back-button-icon" id="backFromSummaryBtn">←</div>
+                    <button class="continue-primary" id="summaryContinueBtn">Continue →</button>
+                </div>
+                <div class="demo-note">← back to edit items</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCREEN 5: PAYMENT (exit + start over link below) -->
+    <div class="phone-column">
+        <div class="screen-label">💸 4. PAYMENT</div>
+        <div class="phone">
+            <div class="screen payment-screen" style="background:#fafafa; padding:20px;" id="paymentScreen">
+                <div class="back-arrow" id="backFromPayment">←</div>
+                <div class="payment-header" style="margin: 8px 0 12px;">
+                    <div class="payment-title" style="font-size:26px; font-weight:700;">How will you pay?</div>
+                    <div style="color:#666;">Choose method</div>
+                </div>
+                <div class="summary-card" id="paymentSummaryMini" style="background:white; border-radius:20px; padding:16px; margin-bottom:20px;"></div>
+                <div class="payment-options">
+                    <div class="payment-option" id="venmoOption"><div class="payment-option-header"><span style="font-size:28px;">💸</span> <strong>Request on Venmo</strong></div><div style="margin-left:40px; font-size:13px; color:#666;">Pre‑filled amounts</div></div>
+                    <div class="payment-option" id="zelleOption"><div class="payment-option-header"><span style="font-size:28px;">💳</span> <strong>Request on Zelle</strong></div><div style="margin-left:40px; font-size:13px; color:#666;">Direct bank transfer</div></div>
+                    <div class="payment-option" id="cashOption"><div class="payment-option-header"><span style="font-size:28px;">💰</span> <strong>Cash / Split at Table</strong></div><div style="margin-left:40px; font-size:13px; color:#666;">Show amounts in person</div></div>
+                </div>
+                <button class="exit-btn" id="exitAppBtn">Done - Exit App</button>
+                <!-- start over grey link button -->
+                <div class="startover-link"><a id="startOverLink">Start over → clear all data</a></div>
+                <div id="toastMsg" class="toast-msg"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ---------- GLOBAL STATE ----------
+    const itemsData = [
+        { id: 0, name: "Pasta & Garlic Bread, w/ Side Salad", price: 13.45, assignedTo: null },
+        { id: 1, name: "Cheeseburger w/ Fries", price: 7.89, assignedTo: null },
+        { id: 2, name: "Oreo Dessert w/ Milkshake", price: 8.99, assignedTo: null },
+        { id: 3, name: "Cheesecake w/ Extra Frosting", price: 9.45, assignedTo: null }
+    ];
+    const baseItemsTotal = itemsData.reduce((sum, i) => sum + i.price, 0); // 39.78
+    const fullBillTotal = 86.45;
+    const taxAndTipTotal = fullBillTotal - baseItemsTotal; // 46.67
+
+    let activePerson = 1;   // 1 or 2
+    let currentAssignment = [null, null, null, null];
+    
+    const persons = {
+        1: { name: "Person 1", emoji: "☕", color: "#e91e63", lightBg: "#fff0f5" },
+        2: { name: "Person 2", emoji: "🍕", color: "#40c4ff", lightBg: "#e6f7ff" }
+    };
+    
+    // Helper re-render selection items
+    function renderItems() {
+        const container = document.getElementById('itemsContainer');
+        if (!container) return;
+        container.innerHTML = '';
+        itemsData.forEach((item, idx) => {
+            const assigned = currentAssignment[idx];
+            let selectedClass = '';
+            if (assigned === 1) selectedClass = 'selected-p1';
+            if (assigned === 2) selectedClass = 'selected-p2';
+            const div = document.createElement('div');
+            div.className = `item ${selectedClass}`;
+            div.innerHTML = `
+                <div class="item-top" style="display:flex; justify-content:space-between;">
+                    <div class="item-name">${item.name}</div>
+                    <div class="item-price">$${item.price.toFixed(2)}</div>
+                </div>
+                <div style="display:flex; gap:8px; margin-top:8px; font-size:20px;">
+                    <span style="opacity:${assigned === 1 ? '1' : '0.3'}">☕</span>
+                    <span style="opacity:${assigned === 2 ? '1' : '0.3'}">🍕</span>
+                </div>
+                ${assigned ? `<div style="margin-top:6px; font-size:12px; font-weight:500; color:${persons[assigned].color}">✓ ${persons[assigned].name}</div>` : '<div style="margin-top:6px; font-size:11px; color:#aaa;">tap to assign</div>'}
+            `;
+            div.addEventListener('click', () => {
+                if (currentAssignment[idx] === activePerson) currentAssignment[idx] = null;
+                else currentAssignment[idx] = activePerson;
+                renderItems();
+                updateActivePersonDisplay();
+                renderSummaryScreen();
+                renderPaymentMiniSummary();
+            });
+            container.appendChild(div);
+        });
+    }
+    
+    function updateActivePersonDisplay() {
+        const labelSpan = document.getElementById('activePersonLabel');
+        const emojiSpan = document.getElementById('activePersonEmoji');
+        if (labelSpan && emojiSpan) {
+            labelSpan.innerText = persons[activePerson].name;
+            emojiSpan.innerText = persons[activePerson].emoji;
+            labelSpan.style.backgroundColor = persons[activePerson].color;
+        }
+    }
+    
+    function switchActivePerson() {
+        activePerson = activePerson === 1 ? 2 : 1;
+        updateActivePersonDisplay();
+    }
+    
+    // get summary data
+    function getSummaryData() {
+        const personItems = { 1: [], 2: [] };
+        for (let i = 0; i < itemsData.length; i++) {
+            const assigned = currentAssignment[i];
+            if (assigned === 1) personItems[1].push(itemsData[i]);
+            else if (assigned === 2) personItems[2].push(itemsData[i]);
+        }
+        const subtotals = { 1: 0, 2: 0 };
+        for (let p of [1,2]) subtotals[p] = personItems[p].reduce((sum, it) => sum + it.price, 0);
+        const totalItemsSum = subtotals[1] + subtotals[2];
+        const taxTipSplit = { 1: 0, 2: 0 };
+        if (totalItemsSum > 0) {
+            taxTipSplit[1] = (subtotals[1] / totalItemsSum) * taxAndTipTotal;
+            taxTipSplit[2] = (subtotals[2] / totalItemsSum) * taxAndTipTotal;
+        } else {
+            taxTipSplit[1] = taxAndTipTotal / 2;
+            taxTipSplit[2] = taxAndTipTotal / 2;
+        }
+        const finalOwed = {
+            1: subtotals[1] + taxTipSplit[1],
+            2: subtotals[2] + taxTipSplit[2]
+        };
+        return { personItems, subtotals, taxTipSplit, finalOwed };
+    }
+    
+    function renderSummaryScreen() {
+        const summaryContainer = document.getElementById('summaryPersonsList');
+        if (!summaryContainer) return;
+        const data = getSummaryData();
+        summaryContainer.innerHTML = '';
+        for (let p of [1,2]) {
+            const itemsList = data.personItems[p];
+            const card = document.createElement('div');
+            card.className = `person-card ${p === 1 ? 'p1' : 'p2'}`;
+            let itemsHtml = '';
+            itemsList.forEach(item => {
+                itemsHtml += `<div class="meal-item"><span>${item.name}</span><span>$${item.price.toFixed(2)}</span></div>`;
+            });
+            if (itemsList.length === 0) itemsHtml = '<div style="font-size:13px; color:#888;">No items assigned</div>';
+            card.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                    <div><span style="font-size:24px;">${persons[p].emoji}</span> <strong style="font-size:18px;">${persons[p].name}</strong></div>
+                    <div class="person-total" style="color:${persons[p].color}">$${data.finalOwed[p].toFixed(2)}</div>
+                </div>
+                <div style="margin-bottom:12px;">${itemsHtml}</div>
+                <div style="border-top:1px solid #eee; padding-top:8px; font-size:13px; display:flex; justify-content:space-between;">
+                    <span>Tax & Tip (proportional)</span>
+                    <span>$${data.taxTipSplit[p].toFixed(2)}</span>
+                </div>
+            `;
+            summaryContainer.appendChild(card);
+        }
+    }
+    
+    function renderPaymentMiniSummary() {
+        const container = document.getElementById('paymentSummaryMini');
+        if (!container) return;
+        const data = getSummaryData();
+        container.innerHTML = `<div style="font-weight:700; margin-bottom:12px;">Split Summary</div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>☕ Person 1</span><strong>$${data.finalOwed[1].toFixed(2)}</strong></div>
+            <div style="display:flex; justify-content:space-between;"><span>🍕 Person 2</span><strong>$${data.finalOwed[2].toFixed(2)}</strong></div>`;
+    }
+    
+    function resetAllAssignments() {
+        for (let i = 0; i < currentAssignment.length; i++) currentAssignment[i] = null;
+        activePerson = 1;
+        renderItems();
+        updateActivePersonDisplay();
+        renderSummaryScreen();
+        renderPaymentMiniSummary();
+    }
+    
+    function populateDefaultItems() {
+        currentAssignment = [null, null, null, null];
+        currentAssignment[0] = 1;
+        currentAssignment[2] = 1;
+        currentAssignment[1] = 2;
+        currentAssignment[3] = 2;
+        renderItems();
+        renderSummaryScreen();
+        renderPaymentMiniSummary();
+    }
+    
+    // attach person switcher on indicator
+    function attachPersonSwitching() {
+        const indicator = document.getElementById('personIndicator');
+        if (indicator) {
+            indicator.style.cursor = 'pointer';
+            indicator.addEventListener('click', () => {
+                switchActivePerson();
+                renderItems();
+            });
+        }
+    }
+    
+    // smooth scrolling navigation
+    function setupNavigation() {
+        document.getElementById('homeStartBtn')?.addEventListener('click', () => document.getElementById('scanScreen')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+        document.getElementById('backFromScan')?.addEventListener('click', () => document.querySelector('.home-v3')?.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+        document.getElementById('backFromSelection')?.addEventListener('click', () => document.getElementById('scanScreen')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+        document.getElementById('backFromPayment')?.addEventListener('click', () => document.getElementById('summaryScreen')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+        
+        const capture = document.getElementById('captureBtn');
+        const manual = document.getElementById('manualEntryBtn');
+        const goToSelection = () => { populateDefaultItems(); document.getElementById('selectionScreen')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+        if (capture) capture.addEventListener('click', goToSelection);
+        if (manual) manual.addEventListener('click', goToSelection);
+        
+        document.getElementById('continueToSummaryBtn')?.addEventListener('click', () => { renderSummaryScreen(); document.getElementById('summaryScreen')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+        document.getElementById('summaryContinueBtn')?.addEventListener('click', () => { renderPaymentMiniSummary(); document.getElementById('paymentScreen')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+        
+        // reset icon on selection screen
+        const resetIcon = document.getElementById('resetItemsIcon');
+        if (resetIcon) resetIcon.addEventListener('click', () => { resetAllAssignments(); });
+        
+        // back arrow on summary -> back to selection
+        const backFromSummary = document.getElementById('backFromSummaryBtn');
+        if (backFromSummary) backFromSummary.addEventListener('click', () => { renderItems(); document.getElementById('selectionScreen')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+        
+        // payment options
+        const toastEl = document.getElementById('toastMsg');
+        const showToast = (msg) => { if(toastEl) { toastEl.innerText = msg; setTimeout(()=>{ if(toastEl) toastEl.innerText=''; },2000); } };
+        document.getElementById('venmoOption')?.addEventListener('click', () => showToast('📱 Venmo request sent! (demo)'));
+        document.getElementById('zelleOption')?.addEventListener('click', () => showToast('🏦 Zelle request ready! (demo)'));
+        document.getElementById('cashOption')?.addEventListener('click', () => showToast('💵 Show breakdown at table.'));
+        document.getElementById('exitAppBtn')?.addEventListener('click', () => showToast('👋 Thanks for using Split/R!'));
+        
+        // start over grey link: full reset + go to home
+        const startOverLink = document.getElementById('startOverLink');
+        if (startOverLink) startOverLink.addEventListener('click', () => { resetAllAssignments(); document.querySelector('.home-v3')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); showToast('✨ All data cleared. Start fresh!'); });
+    }
+    
+    function init() {
+        renderItems();
+        updateActivePersonDisplay();
+        attachPersonSwitching();
+        renderSummaryScreen();
+        renderPaymentMiniSummary();
+        setupNavigation();
+        populateDefaultItems(); // warm start
+    }
+    init();
+</script>
+</body>
+</html>
