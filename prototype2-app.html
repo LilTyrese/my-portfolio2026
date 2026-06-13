@@ -291,6 +291,47 @@
             margin: 14px 0 8px;
         }
 
+        .add-btn {
+            width: 52px;
+            height: 52px;
+            border-radius: 28px;
+            background: #e91e63;
+            color: white;
+            font-size: 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 8px 18px rgba(233,30,99,0.22);
+            border: none;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        .modal {
+            background: white;
+            border-radius: 12px;
+            padding: 18px;
+            width: 320px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+        }
+        .modal h3 { margin-bottom: 8px; font-size:16px; }
+        .modal .row { margin-bottom: 10px; }
+        .modal input[type="text"], .modal input[type="number"], .modal select {
+            width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #eee; font-size:14px;
+        }
+        .modal .modal-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:12px; }
+        .modal .btn { padding:8px 12px; border-radius:8px; border:none; cursor:pointer; }
+        .modal .btn.primary { background:#e91e63; color:white; }
+        .modal .btn.ghost { background:#f3f4f6; }
+
         .back-button-icon {
             background: #f0f0f0;
             width: 52px;
@@ -398,47 +439,48 @@
             { id: 2, name: "Oreo Dessert w/ Milkshake", price: 8.99 },
             { id: 3, name: "Cheesecake w/ Extra Frosting", price: 9.45 }
         ];
-        const baseItemsTotal = itemsData.reduce((sum, i) => sum + i.price, 0);
-        const fullBillTotal = 86.45;
-        const taxAndTipTotal = fullBillTotal - baseItemsTotal;
+        const baseItemsTotal = () => itemsData.reduce((sum, i) => sum + i.price, 0);
+        let fullBillTotal = 86.45;
+        function taxAndTipTotal() { return fullBillTotal - itemsTotal(); }
 
         const persons = {
             1: { name: "Person 1", emoji: "☕", color: "#e91e63", lightBg: "#fff0f5" },
             2: { name: "Person 2", emoji: "🍕", color: "#40c4ff", lightBg: "#e6f7ff" }
         };
 
+        const emojiPool = ['☕','🍕','🍺','🍰','🌮','🥗','🍣'];
+        const colorPool = ['#e91e63','#40c4ff','#ffb74d','#8e24aa','#26a69a','#ff7043','#7e57c2'];
+
+        function nextPersonId() { return Math.max(...Object.keys(persons).map(k=>Number(k))) + 1; }
+
         let currentScreen = 'home';
         let activePerson = 1;
         let currentAssignment = [null, null, null, null];
         let toastTimer = null;
 
+        function itemsTotal() { return baseItemsTotal(); }
+
         function getSummaryData() {
-            const personItems = { 1: [], 2: [] };
+            const keys = Object.keys(persons).map(k=>Number(k));
+            const personItems = {};
+            for (let k of keys) personItems[k] = [];
             for (let i = 0; i < itemsData.length; i++) {
                 const assigned = currentAssignment[i];
-                if (assigned === 1) personItems[1].push(itemsData[i]);
-                if (assigned === 2) personItems[2].push(itemsData[i]);
+                if (assigned && personItems[assigned]) personItems[assigned].push(itemsData[i]);
             }
-            const subtotals = { 1: 0, 2: 0 };
-            for (let p of [1, 2]) subtotals[p] = personItems[p].reduce((sum, it) => sum + it.price, 0);
-            const totalItemsSum = subtotals[1] + subtotals[2];
-            const taxTipSplit = { 1: 0, 2: 0 };
+            const subtotals = {};
+            for (let p of keys) subtotals[p] = personItems[p].reduce((sum, it) => sum + it.price, 0);
+            const totalItemsSum = Object.values(subtotals).reduce((s,v)=>s+v,0);
+            const taxTipSplit = {};
             if (totalItemsSum > 0) {
-                taxTipSplit[1] = (subtotals[1] / totalItemsSum) * taxAndTipTotal;
-                taxTipSplit[2] = (subtotals[2] / totalItemsSum) * taxAndTipTotal;
+                for (let p of keys) taxTipSplit[p] = (subtotals[p] / totalItemsSum) * taxAndTipTotal();
             } else {
-                taxTipSplit[1] = taxAndTipTotal / 2;
-                taxTipSplit[2] = taxAndTipTotal / 2;
+                const share = taxAndTipTotal() / keys.length;
+                for (let p of keys) taxTipSplit[p] = share;
             }
-            return {
-                personItems,
-                subtotals,
-                taxTipSplit,
-                finalOwed: {
-                    1: subtotals[1] + taxTipSplit[1],
-                    2: subtotals[2] + taxTipSplit[2]
-                }
-            };
+            const finalOwed = {};
+            for (let p of keys) finalOwed[p] = subtotals[p] + taxTipSplit[p];
+            return { personItems, subtotals, taxTipSplit, finalOwed };
         }
 
         function showToast(message) {
@@ -448,6 +490,29 @@
             toast.textContent = message;
             if (toastTimer) clearTimeout(toastTimer);
             toastTimer = setTimeout(() => { toast.textContent = ''; }, 2000);
+        }
+
+        // Global toast fallback: displays a temporary floating message if no in-screen toast exists
+        function showGlobalToast(message) {
+            showToast(message);
+            // if in-screen toast didn't exist, create a floating one
+            const screenContent = document.getElementById('screenContent');
+            const toast = screenContent ? screenContent.querySelector('.toast-msg') : null;
+            if (toast) return;
+            const el = document.createElement('div');
+            el.className = 'toast-msg';
+            el.style.position = 'fixed';
+            el.style.left = '50%';
+            el.style.bottom = '36px';
+            el.style.transform = 'translateX(-50%)';
+            el.style.background = 'rgba(0,0,0,0.8)';
+            el.style.color = 'white';
+            el.style.padding = '10px 14px';
+            el.style.borderRadius = '10px';
+            el.style.zIndex = 10000;
+            el.textContent = message;
+            document.body.appendChild(el);
+            setTimeout(() => { el.remove(); }, 2000);
         }
 
         function renderHomeScreen() {
@@ -494,6 +559,12 @@
                 const assigned = currentAssignment[idx];
                 const selectedClass = assigned === 1 ? 'selected-p1' : assigned === 2 ? 'selected-p2' : '';
                 const assignedLabel = assigned ? `<div style="margin-top:6px; font-size:12px; font-weight:500; color:${persons[assigned].color}">✓ ${persons[assigned].name}</div>` : '<div style="margin-top:6px; font-size:11px; color:#aaa;">tap to assign</div>';
+                // build dynamic emoji row for available persons
+                const emojiRow = Object.keys(persons).map(k => {
+                    const pid = Number(k);
+                    return `<span style="opacity:${assigned === pid ? '1' : '0.25'}">${persons[pid].emoji}</span>`;
+                }).join('');
+
                 return `
                     <div class="item ${selectedClass}" data-item="${idx}">
                         <div class="item-top" style="display:flex; justify-content:space-between;">
@@ -501,8 +572,7 @@
                             <div class="item-price">$${item.price.toFixed(2)}</div>
                         </div>
                         <div style="display:flex; gap:8px; margin-top:8px; font-size:20px;">
-                            <span style="opacity:${assigned === 1 ? '1' : '0.3'}">☕</span>
-                            <span style="opacity:${assigned === 2 ? '1' : '0.3'}">🍕</span>
+                            ${emojiRow}
                         </div>
                         ${assignedLabel}
                     </div>
@@ -527,9 +597,10 @@
                 </div>
                 <div>
                     <div class="action-row">
-                        <div class="back-button-icon" id="resetItemsIcon">↻</div>
-                        <button class="continue-primary" id="continueToSummaryBtn">Continue →</button>
-                    </div>
+                            <div class="back-button-icon" id="resetItemsIcon">↻</div>
+                            <button class="add-btn" id="addBtn">+</button>
+                            <button class="continue-primary" id="continueToSummaryBtn">Continue →</button>
+                        </div>
                     <p class="demo-note">Tap the indicator to switch between people. Tap an item to assign or clear it.</p>
                 </div>
             `;
@@ -537,8 +608,9 @@
 
         function renderSummaryScreen() {
             const data = getSummaryData();
-            const personHtml = [1,2].map(p => {
-                const itemsList = data.personItems[p];
+            const keys = Object.keys(persons).map(k=>Number(k));
+            const personHtml = keys.map(p => {
+                const itemsList = data.personItems[p] || [];
                 const itemContent = itemsList.length ? itemsList.map(item => `
                     <div class="meal-item"><span>${item.name}</span><span>$${item.price.toFixed(2)}</span></div>
                 `).join('') : '<div style="font-size:13px; color:#888;">No items assigned</div>';
@@ -631,6 +703,9 @@
             const resetItemsIcon = document.getElementById('resetItemsIcon');
             if (resetItemsIcon) resetItemsIcon.addEventListener('click', () => { resetAllAssignments(); currentScreen = 'selection'; renderScreen(); });
 
+            const addBtn = document.getElementById('addBtn');
+            if (addBtn) addBtn.addEventListener('click', () => { openAddModal(); });
+
             const personIndicator = document.getElementById('personIndicator');
             if (personIndicator) personIndicator.addEventListener('click', () => { switchActivePerson(); renderScreen(); });
 
@@ -668,16 +743,103 @@
         }
 
         function switchActivePerson() {
-            activePerson = activePerson === 1 ? 2 : 1;
+            const keys = Object.keys(persons).map(k=>Number(k));
+            const idx = keys.indexOf(activePerson);
+            const next = keys[(idx + 1) % keys.length];
+            activePerson = next;
+        }
+
+        function openAddModal() {
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.id = 'addModalOverlay';
+            overlay.innerHTML = `
+                <div class="modal" role="dialog">
+                    <h3>Add Person or Meal</h3>
+                    <div class="row">
+                        <label style="font-size:13px; font-weight:600;">Action</label>
+                        <select id="addAction">
+                            <option value="person">Add Person</option>
+                            <option value="meal">Add Meal</option>
+                        </select>
+                    </div>
+                    <div class="row" id="personRow">
+                        <label style="font-size:13px; font-weight:600;">Person Name</label>
+                        <input id="personNameInput" type="text" placeholder="e.g. Alex" />
+                    </div>
+                    <div class="row" id="mealRow" style="display:none;">
+                        <label style="font-size:13px; font-weight:600;">Meal Name</label>
+                        <input id="mealNameInput" type="text" placeholder="e.g. Extra Fries" />
+                        <div style="height:8px"></div>
+                        <label style="font-size:13px; font-weight:600;">Price</label>
+                        <input id="mealPriceInput" type="number" step="0.01" placeholder="0.00" />
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn ghost" id="cancelAddBtn">Cancel</button>
+                        <button class="btn primary" id="confirmAddBtn">Add</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            const addAction = document.getElementById('addAction');
+            addAction.addEventListener('change', (e) => {
+                const val = e.target.value;
+                document.getElementById('personRow').style.display = val === 'person' ? 'block' : 'none';
+                document.getElementById('mealRow').style.display = val === 'meal' ? 'block' : 'none';
+            });
+            document.getElementById('cancelAddBtn').addEventListener('click', closeAddModal);
+            document.getElementById('confirmAddBtn').addEventListener('click', () => {
+                const val = document.getElementById('addAction').value;
+                if (val === 'person') {
+                    const name = document.getElementById('personNameInput').value.trim();
+                    addPerson(name || `Person ${nextPersonId()}`);
+                } else {
+                    const name = document.getElementById('mealNameInput').value.trim() || 'New Meal';
+                    const price = parseFloat(document.getElementById('mealPriceInput').value) || 0.00;
+                    addMeal(name, price);
+                }
+                closeAddModal();
+                renderScreen();
+            });
+        }
+
+        function closeAddModal() {
+            const overlay = document.getElementById('addModalOverlay');
+            if (overlay) overlay.remove();
+        }
+
+        function addPerson(name) {
+            const count = Object.keys(persons).length;
+            if (count >= 4) {
+                showGlobalToast('Demo limit reached — max 4 people');
+                return;
+            }
+            const id = nextPersonId();
+            const emoji = emojiPool[(id-1) % emojiPool.length];
+            const color = colorPool[(id-1) % colorPool.length];
+            persons[id] = { name, emoji, color, lightBg: '#fff' };
+            activePerson = id;
+        }
+
+        function addMeal(name, price) {
+            // Demo limit: max 5 meals
+            if (itemsData.length >= 5) {
+                showGlobalToast('Demo limit — max 5 meals');
+                return;
+            }
+            const id = itemsData.length;
+            itemsData.push({ id, name, price });
+            currentAssignment.push(null);
+            fullBillTotal = +(fullBillTotal + price).toFixed(2);
         }
 
         function resetAllAssignments() {
-            currentAssignment = [null, null, null, null];
+            currentAssignment = Array(itemsData.length).fill(null);
             activePerson = 1;
         }
 
         function populateDefaultItems() {
-            currentAssignment = [1, 2, 1, 2];
+            currentAssignment = itemsData.map((it, i) => (i % 2) + 1);
             activePerson = 1;
         }
 
