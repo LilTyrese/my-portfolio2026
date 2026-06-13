@@ -88,6 +88,72 @@
         .image-container span.icon { font-size: 28px; }
         .image-container span.label { font-weight: 600; color: var(--text-muted); }
 
+        .image-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin: 28px 0 12px;
+        }
+        .image-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+        .image-card img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+        .image-caption {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-align: center;
+            max-width: 740px;
+            margin: 0 auto 24px;
+            line-height: 1.5;
+        }
+
+        .phone-frame {
+            width: 100%;
+            max-width: 340px;
+            margin: 18px auto 0;
+            border: 14px solid #1a1a1a;
+            border-radius: 56px;
+            padding: 13px 12px 18px;
+            background: #111;
+            position: relative;
+        }
+        .phone-frame::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90px;
+            height: 8px;
+            background: #222;
+            border-radius: 999px;
+        }
+        .phone-frame::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 54px;
+            height: 54px;
+            border: 2px solid #333;
+            border-radius: 50%;
+            background: #111;
+        }
+        .phone-frame img {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: 34px;
+        }
+
         .iframe-wrapper {
             display: flex;
             justify-content: center;
@@ -143,6 +209,7 @@
             .matrix-left { border-right: none; border-bottom: 1px solid var(--border); padding-right: 0; padding-bottom: 20px; }
             .matrix-right { padding-left: 0; padding-top: 10px; }
             .persona-grid { grid-template-columns: 1fr; }
+            .image-row { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -181,11 +248,15 @@
         <h2>The Dinner Table Math Problem</h2>
         <p>The end of a group dinner can easily turn awkward. Out come the native phone calculators, separate notes apps, and stressful calculations to guess tax and tip. Existing financial apps either require every person at the table to download the app, or they force you to create a shared profile just for a single meal.</p>
         
-        <div class="image-container">
-            <span class="icon">🍽️</span>
-            <span class="label">[ Image: Split/R Concept Sketches ]</span>
-            <p style="font-size:12px; max-width:400px; margin:0;">Insert a clean picture or concept sketch illustrating the frustration of splitting a bill manually.</p>
+        <div class="image-row">
+            <div class="image-card">
+                <img src="splitr sketches.png" alt="Split/R sketches" loading="lazy">
+            </div>
+            <div class="image-card">
+                <img src="awkward landscape.png" alt="Awkward landscape" loading="lazy">
+            </div>
         </div>
+        <p class="image-caption">Left: early Split/R sketches. Right: the awkward restaurant table moment that inspired the design.</p>
     </section>
 
     <section>
@@ -246,7 +317,7 @@
     </section>
 
     <section>
-        <h2>Usability Testing & Revisions</h2>
+        <h2>Low Fidelity Usability Testing & Revisions</h2>
         <p>Operating under a strict 5-day timeline forced me to test rough wireframes fast. Here are the clear friction points users experienced, and how the UI layout fixed them:</p>
 
         <div class="matrix-row">
@@ -254,13 +325,21 @@
                 <span class="tag-friction">⚠️ User Friction</span>
                 <h4 style="font-size: 15px; margin-bottom: 6px;">No Way to Fix Mistakes</h4>
                 <p style="font-size: 13.5px; color: var(--text-muted);">Users felt trapped while assigning receipt item costs because any accidental tap forced them to start the app over from scratch.</p>
-                <div class="matrix-thumb">[ 📸 Image: Wireframes with Missing Back Buttons ]</div>
+                <div class="matrix-thumb">
+                    <div class="phone-frame">
+                        <img src="Trapped.png" alt="Trapped screen showing no way to fix mistakes">
+                    </div>
+                </div>
             </div>
             <div class="matrix-right">
                 <span class="tag-fix">✅ The UI Fix</span>
                 <h4 style="font-size: 15px; margin-bottom: 6px;">Global Navigation Safety Net</h4>
-                <p style="font-size: 13.5px; color: var(--text-muted);">Added clear, persistent inline 'Back' chevron links and an instant 'Reset Screen' button to the header of every view layer.</p>
-                <div class="matrix-thumb" style="border-color: var(--accent); color: var(--accent);">[ 📸 Image: Updated UI Header Safe Options ]</div>
+                <p style="font-size: 13.5px; color: var(--text-muted);">Added instant reset icon button to the bottom of Assign Items screen and a back button at the top of the screens for clear navigation.</p>
+                <div class="matrix-thumb" style="border-color: var(--accent); color: var(--accent);">
+                    <div class="phone-frame">
+                        <img src="reset.png" alt="Reset screen showing global navigation safety net">
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -269,13 +348,21 @@
                 <span class="tag-friction">⚠️ User Friction</span>
                 <h4 style="font-size: 15px; margin-bottom: 6px;">Forgotten Menu Items</h4>
                 <p style="font-size: 13.5px; color: var(--text-muted);">Users realized they missed a shared appetizer or a side drink halfway through assigning costs, forcing them to quit their session.</p>
-                <div class="matrix-thumb">[ 📸 Image: Fixed, Rigid App Flow Map ]</div>
+                <div class="matrix-thumb">
+                    <div class="phone-frame">
+                        <img src="Total Amount Split.png" alt="Total Amount Split screen illustrating forgotten menu items">
+                    </div>
+                </div>
             </div>
             <div class="matrix-right">
                 <span class="tag-fix">✅ The UI Fix</span>
                 <h4 style="font-size: 15px; margin-bottom: 6px;">On-The-Fly Item Addition</h4>
                 <p style="font-size: 13.5px; color: var(--text-muted);">Placed a persistent floating "+" action button that lets users dynamically add an extra guest or line item at any point mid-calculation.</p>
-                <div class="matrix-thumb" style="border-color: var(--accent); color: var(--accent);">[ 📸 Image: UI Screen with Active Plus Buttons ]</div>
+                <div class="matrix-thumb" style="border-color: var(--accent); color: var(--accent);">
+                    <div class="phone-frame">
+                        <img src="3 Person One - Selection - List of Meals.png" alt="3-person selection list of meals">
+                    </div>
+                </div>
             </div>
         </div>
     </section>
