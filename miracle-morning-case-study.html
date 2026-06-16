@@ -107,7 +107,7 @@
         .comparison-card h4 { font-size: 12px; color: var(--text-light); text-transform: uppercase; margin-bottom: 8px; }
         .comparison-card .stat { font-size: 28px; font-weight: 700; color: var(--text-main); }
 
-        /* Visual Matrix Block for Friction/Fixes */
+        /* Visual Matrix Block for Friction/Fixes - FIXED */
         .matrix-row {
             display: grid; grid-template-columns: 1fr 1fr; gap: 20px; 
             background: var(--surface); border: 1px solid var(--border); 
@@ -117,7 +117,36 @@
         .matrix-right { padding-left: 10px; }
         .tag-friction { display: inline-block; background: #FFE0E6; color: #D81B60; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; margin-bottom: 8px; }
         .tag-fix { display: inline-block; background: #E8F5E9; color: #2E7D32; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; margin-bottom: 8px; }
-        .matrix-thumb { background: #F9F9F9; border: 1px dashed var(--border); padding: 16px; font-size: 12px; color: var(--text-light); text-align: center; border-radius: var(--radius-sm); margin-top: 12px; }
+        
+        /* FIXED: Equal image containers - NO CROPPING */
+        .matrix-thumb {
+            background: #F9F9F9;
+            border: 1px dashed var(--border);
+            padding: 16px;
+            text-align: center;
+            border-radius: var(--radius-sm);
+            margin-top: 12px;
+            min-height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .matrix-thumb img {
+            width: 100%;
+            height: auto;
+            max-height: 280px;
+            object-fit: contain;
+            border-radius: 8px;
+            display: block;
+        }
+        
+        /* Highlight border for fix side */
+        .matrix-right .matrix-thumb {
+            border-color: var(--accent);
+        }
+
         .iframe-wrapper { display: flex; justify-content: center; padding: 36px 0; }
         .iframe-wrapper iframe { width: 100%; max-width: 420px; height: 760px; border: none; border-radius: 44px; box-shadow: 0 24px 60px rgba(0,0,0,0.12); background: transparent; }
 
@@ -136,10 +165,15 @@
         .p-btn.next:hover { background: var(--accent); border-color: var(--accent); color: var(--surface); }
 
         footer { padding: 40px 0; text-align: center; color: var(--text-light); font-size: 13px; border-top: 1px solid var(--border); background: #F5F5F5; }
+        
         @media (max-width: 700px) {
             .matrix-row { grid-template-columns: 1fr; }
             .matrix-left { border-right: none; border-bottom: 1px solid var(--border); padding-right: 0; padding-bottom: 20px; }
             .matrix-right { padding-left: 0; padding-top: 10px; }
+            .matrix-thumb { min-height: 200px; }
+            .matrix-thumb img { max-height: 200px; }
+            .meta-grid { grid-template-columns: 1fr; gap: 12px; }
+            h1 { font-size: 28px; }
         }
     </style>
 </head>
@@ -190,20 +224,20 @@
         <p>Testing my initial design layouts with real people exposed a few severe roadblocks. Here is exactly what was frustrating users, and the visual changes made to fix them:</p>
 
         <div class="matrix-row">
-                <div class="matrix-left">
+            <div class="matrix-left">
                 <span class="tag-friction">⚠️ User Friction</span>
                 <h4 style="font-size: 15px; margin-bottom: 6px;">Overwhelming Setup Process</h4>
                 <p style="font-size: 13.5px; color: var(--text-muted);">Users had to fill out multi-page forms to set up their morning routine timers before they could start using the app.</p>
                 <div class="matrix-thumb">
-                    <img src="many screens.png" alt="Many screens flow map" style="width:100%; display:block; border-radius:8px;">
+                    <img src="many screens.png" alt="Many screens flow map">
                 </div>
             </div>
             <div class="matrix-right">
                 <span class="tag-fix">✅ The UI Fix</span>
                 <h4 style="font-size: 15px; margin-bottom: 6px;">One-Tap Fast Starts</h4>
                 <p style="font-size: 13.5px; color: var(--text-muted);">Replaced forms with smart, pre-set recommended times. Users can now launch their routine instantly with a single tap.</p>
-                <div class="matrix-thumb" style="border-color: var(--accent); color: var(--accent);">
-                    <img src="One-Tap Fast Starts.png" alt="One-Tap Fast Starts screen" style="width:100%; display:block; border-radius:8px;">
+                <div class="matrix-thumb">
+                    <img src="One-Tap Fast Starts.png" alt="One-Tap Fast Starts screen">
                 </div>
             </div>
         </div>
@@ -214,15 +248,15 @@
                 <h4 style="font-size: 15px; margin-bottom: 6px;">Constant Interruption and Tapping</h4>
                 <p style="font-size: 13.5px; color: var(--text-muted);">Users had to pick up their phone and tap 'Next' at the end of every individual routine block, breaking their concentration.</p>
                 <div class="matrix-thumb">
-                    <img src="WebFlow.jpg" alt="Pop-ups interrupting routine" style="width:100%; display:block; border-radius:8px;">
+                    <img src="WebFlow.jpg" alt="Pop-ups interrupting routine">
                 </div>
             </div>
             <div class="matrix-right">
                 <span class="tag-fix">✅ The UI Fix</span>
                 <h4 style="font-size: 15px; margin-bottom: 6px;">Auto-Advancing Timeline Flow</h4>
                 <p style="font-size: 13.5px; color: var(--text-muted);">Designed an automated dashboard hub. Once the morning session starts, the app moves smoothly from one step to the next on its own.</p>
-                <div class="matrix-thumb" style="border-color: var(--accent); color: var(--accent);">
-                    <img src="Auto-Advancing Timeline Flow.png" alt="Auto-Advancing Timeline Flow screen" style="width:100%; display:block; border-radius:8px;">
+                <div class="matrix-thumb">
+                    <img src="Auto-Advancing Timeline Flow.png" alt="Auto-Advancing Timeline Flow screen">
                 </div>
             </div>
         </div>
@@ -258,7 +292,7 @@
     <div class="project-nav-container">
         <span style="font-size:13px; color:var(--text-light);">Project 1 of 3</span>
         <div style="display: flex; gap: 10px;">
-            <a href="index.html" class="p-btn">📋 Back To Portfolio </a>
+            <a href="index.html" class="p-btn">📋 Back To Portfolio</a>
             <a href="splitr-case-study.html" class="p-btn next">Next: Split/R →</a>
         </div>
     </div>
